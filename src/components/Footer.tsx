@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Facebook, Twitter, Instagram, Github, Linkedin } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 const Footer = () => {
@@ -20,23 +19,6 @@ const Footer = () => {
               <p className="text-sm text-[#F5F5F5] max-w-xs">
                 Your mind's second brain, helping you think better, plan smarter, and never forget what matters.
               </p>
-              <div className="mt-4 flex space-x-4">
-                <a href="#" className="text-[#F5F5F5] hover:text-white transition-colors">
-                  <Twitter className="h-5 w-5" />
-                </a>
-                <a href="#" className="text-[#F5F5F5] hover:text-white transition-colors">
-                  <Facebook className="h-5 w-5" />
-                </a>
-                <a href="#" className="text-[#F5F5F5] hover:text-white transition-colors">
-                  <Instagram className="h-5 w-5" />
-                </a>
-                <a href="#" className="text-[#F5F5F5] hover:text-white transition-colors">
-                  <Linkedin className="h-5 w-5" />
-                </a>
-                <a href="#" className="text-[#F5F5F5] hover:text-white transition-colors">
-                  <Github className="h-5 w-5" />
-                </a>
-              </div>
             </div>
             
             <div>
@@ -58,7 +40,10 @@ const Footer = () => {
                   placeholder="Your email" 
                   className="bg-white/10 border-white/20 text-[#F5F5F5] placeholder:text-[#F5F5F5]/50"
                 />
-                <Button variant="outline" className="border-white/20 text-[#F5F5F5] hover:bg-white/10">
+                <Button 
+                  variant="outline" 
+                  className="border-white/20 text-[#F5F5F5] hover:bg-white/10 bg-[#222]"
+                >
                   Subscribe
                 </Button>
               </div>
