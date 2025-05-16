@@ -16,7 +16,7 @@ const Footer = () => {
                     <img 
                       src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" 
                       alt="akinAI logo" 
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain bg-transparent"
                     />
                   </AspectRatio>
                 </div>
