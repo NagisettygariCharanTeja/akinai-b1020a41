@@ -9,7 +9,6 @@ const HeroSection = () => {
       <div className="container relative z-10">
         <div className="flex flex-col items-center">
           <div className="mb-12 text-center">
-            {/* akinAI Logo with arrow */}
             <div className="mb-6 flex flex-col items-center">
               <div className="mb-4">
                 <span className="text-black text-5xl font-bold font-dm-sans">akin</span><span className="text-[#D9D9D9] text-5xl font-bold font-dm-sans">AI</span>
