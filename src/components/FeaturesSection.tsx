@@ -2,7 +2,6 @@
 import React from 'react';
 import { 
   SquareSplitVertical,
-  Users,
   Pin,
   Moon
 } from 'lucide-react';
@@ -14,12 +13,6 @@ const FeaturesSection = () => {
       emoji: "🔲",
       title: "Split Screen Multitasking",
       description: "Use multiple AI threads side-by-side. Compare ideas, plan projects, or talk with two different personas — all in one view. Imagine ChatGPT meets your personal workspace — and they work together."
-    },
-    {
-      icon: <Users size={28} />,
-      emoji: "👥",
-      title: "Multiple User Profiles",
-      description: "Switch between different roles and states of mind — effortlessly. Whether you're a student, a founder, a designer, or just browsing — AkinAI adapts. One AI. Multiple yous. Each with its own memory, tone, and focus."
     },
     {
       icon: <Pin size={28} />,
@@ -45,7 +38,7 @@ const FeaturesSection = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Key Features</h2>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {features.map((feature, index) => (
             <div key={index} className="group">
               <div className="bg-black/10 backdrop-blur-sm p-8 rounded-xl border border-white/10 h-full transition-all duration-300 hover:border-[#403E43]/30 hover:bg-black/20">

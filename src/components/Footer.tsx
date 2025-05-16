@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const Footer = () => {
   return (
@@ -10,22 +9,6 @@ const Footer = () => {
         <div className="border-t border-white/20 pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
             <div>
-              <div className="flex items-center mb-6">
-                <div className="mr-3">
-                  <div className="w-12 h-12">
-                    <AspectRatio ratio={1/1} className="w-full">
-                      <img 
-                        src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" 
-                        alt="akinAI logo" 
-                        className="w-full h-full object-contain"
-                      />
-                    </AspectRatio>
-                  </div>
-                </div>
-                <div className="text-xl font-bold">
-                  <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>
-                </div>
-              </div>
               <p className="text-sm text-[#F5F5F5] max-w-xs">
                 Your mind's second brain, helping you think better, plan smarter, and never forget what matters.
               </p>
