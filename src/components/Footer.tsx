@@ -12,13 +12,12 @@ const Footer = () => {
             <div>
               <div className="mb-6 flex flex-col items-center md:items-start">
                 <div className="w-16 h-16 flex justify-center">
-                  <AspectRatio ratio={1/1} className="w-full">
-                    <img 
-                      src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" 
-                      alt="akinAI logo" 
-                      className="w-full h-full object-contain bg-transparent"
-                    />
-                  </AspectRatio>
+                  <img 
+                    src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" 
+                    alt="akinAI logo" 
+                    className="w-full h-full object-contain opacity-90 mix-blend-normal"
+                    style={{ filter: 'brightness(0.95) contrast(0.95)' }}
+                  />
                 </div>
               </div>
               <p className="text-sm text-[#F5F5F5] max-w-xs">
