@@ -10,14 +10,9 @@ const Footer = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
             <div>
               <div className="mb-6 flex flex-col items-center md:items-start">
-                <div className="w-16 h-16 flex justify-center">
-                  <img 
-                    src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" 
-                    alt="akinAI logo" 
-                    className="w-full h-full object-contain opacity-90 mix-blend-normal"
-                    style={{ filter: 'brightness(0.95) contrast(0.95)' }}
-                  />
-                </div>
+                <h2 className="font-dm-sans text-2xl font-bold">
+                  <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>
+                </h2>
               </div>
               <p className="text-sm text-[#F5F5F5] max-w-xs">
                 Your mind's second brain, helping you think better, plan smarter, and never forget what matters.

@@ -2,7 +2,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const HeroSection = () => {
   return (
@@ -10,15 +9,11 @@ const HeroSection = () => {
       <div className="container relative z-10">
         <div className="flex flex-col items-center">
           <div className="mb-12 text-center">
-            {/* Just the logo */}
+            {/* Logo as text */}
             <div className="mb-6 flex flex-col items-center">
-              <div className="w-32 h-32 flex justify-center">
-                <img 
-                  src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" 
-                  alt="akinAI logo" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
+              <h1 className="font-dm-sans text-5xl font-bold">
+                <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>
+              </h1>
             </div>
 
             <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-black leading-tight mb-8 max-w-4xl mx-auto">
