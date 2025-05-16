@@ -1,17 +1,26 @@
 
 import React from 'react';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const Footer = () => {
   return (
-    <footer className="py-16 relative">
+    <footer className="py-12 relative">
       <div className="absolute inset-0 bg-black/10 -z-10"></div>
       <div className="container">
-        <div className="border-t border-white/20 pt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div className="border-t border-white/20 pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             <div>
               <div className="flex items-center mb-6">
                 <div className="mr-3">
-                  <img src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" alt="akinAI logo" className="w-10 h-10" />
+                  <div className="w-12 h-12">
+                    <AspectRatio ratio={1/1} className="w-full">
+                      <img 
+                        src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" 
+                        alt="akinAI logo" 
+                        className="w-full h-full object-contain"
+                      />
+                    </AspectRatio>
+                  </div>
                 </div>
                 <div className="text-xl font-bold">
                   <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>
@@ -33,7 +42,7 @@ const Footer = () => {
             </div>
           </div>
           
-          <div className="flex flex-col sm:flex-row justify-between items-center border-t border-white/10 pt-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center border-t border-white/10 pt-4">
             <p className="text-sm text-[#F5F5F5]">© 2025 akinAI. All rights reserved.</p>
             <p className="text-sm text-[#F5F5F5] mt-2 sm:mt-0">Built with ❤️ by the akinAI Team</p>
           </div>
