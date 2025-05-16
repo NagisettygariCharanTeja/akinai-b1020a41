@@ -18,10 +18,7 @@ const MissionSection = () => {
                 <h2 className="text-4xl md:text-5xl font-bold mb-6">Our Mission</h2>
                 <div className="space-y-4">
                   <p className="text-base md:text-lg text-[#F5F5F5] max-w-3xl">
-                    To build an AI that doesn't just answer you —<br />
-                    …but understands you.<br />
-                    To bridge memory and creativity, structure and spontaneity.<br />
-                    To make AI feel like a partner, not a tool.
+                    To build an AI that doesn't just answer you, but understands you. To bridge memory and creativity, structure and spontaneity. To make AI feel like a partner, not a tool.
                   </p>
                 </div>
               </div>

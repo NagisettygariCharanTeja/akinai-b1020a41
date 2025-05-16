@@ -4,11 +4,11 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const Footer = () => {
   return (
-    <footer className="py-12 relative">
+    <footer className="py-8 relative">
       <div className="absolute inset-0 bg-black/10 -z-10"></div>
       <div className="container">
         <div className="border-t border-white/20 pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
             <div>
               <div className="flex items-center mb-6">
                 <div className="mr-3">
@@ -27,7 +27,7 @@ const Footer = () => {
                 </div>
               </div>
               <p className="text-sm text-[#F5F5F5] max-w-xs">
-                Your mind's second brain - helping you think better, plan smarter, and never forget what matters.
+                Your mind's second brain, helping you think better, plan smarter, and never forget what matters.
               </p>
             </div>
             
