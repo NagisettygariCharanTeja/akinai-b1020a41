@@ -9,15 +9,15 @@ const WhatIsSection = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="md:order-2">
             <div className="relative">
-              <div className="absolute top-10 left-10 w-40 h-40 bg-[#333333]/20 rounded-full blur-xl"></div>
-              <div className="absolute bottom-10 right-10 w-40 h-40 bg-[#222222]/20 rounded-full blur-xl"></div>
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#333333]/20 rounded-full blur-xl"></div>
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#222222]/20 rounded-full blur-xl"></div>
               <div className="bg-black/10 backdrop-blur-sm p-8 rounded-xl border border-white/10 relative z-10">
                 <div className="bg-gradient-to-r from-[#403E43] to-[#222222] p-3 inline-flex rounded-full mb-6">
                   <Zap className="text-white h-6 w-6" />
                 </div>
                 <h2 className="text-4xl md:text-5xl font-bold mb-6">What is <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>?</h2>
                 <p className="text-lg md:text-xl text-[#F5F5F5] max-w-3xl">
-                  akinAI is an AI powered digital assistant designed to mirror your thinking patterns, 
+                  akinAI is an AI-powered digital assistant designed to mirror your thinking patterns, 
                   organize your digital life, and spark creativity like a true second brain.
                   It's not just about answering questions — it's about staying in sync with you.
                 </p>
@@ -28,7 +28,7 @@ const WhatIsSection = () => {
           <div className="md:order-1">
             <div className="relative h-64 md:h-full">
               <div className="absolute inset-0 bg-gradient-to-r from-[#403E43]/30 to-[#222222]/30 rounded-2xl transform rotate-3"></div>
-              <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-2xl rotate-3 border border-white/10"></div>
+              <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-2xl -rotate-3 border border-white/10"></div>
               <div className="absolute inset-8 flex items-center justify-center">
                 <div className="text-9xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-400 to-gray-100">AI</div>
               </div>

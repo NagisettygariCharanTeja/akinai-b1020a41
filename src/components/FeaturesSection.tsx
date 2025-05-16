@@ -12,12 +12,12 @@ const FeaturesSection = () => {
       icon: <SquareSplitVertical size={28} />,
       emoji: "🔲",
       title: "Split Screen Multitasking",
-      description: "Use multiple AI threads side by side. Compare ideas, plan projects, or talk with two different personas — all in one view. Imagine ChatGPT meets your personal workspace — and they work together."
+      description: "Use multiple AI threads side-by-side. Compare ideas, plan projects, or talk with two different personas — all in one view. Imagine ChatGPT meets your personal workspace — and they work together."
     },
     {
       icon: <Pin size={28} />,
       emoji: "📌",
-      title: "Pin a Prompt",
+      title: "Pin-a-Prompt",
       description: "Got a mantra, plan, or question you want to keep in sight? Pin it. Set how long it stays visible. Stay focused without retyping. Think of it like sticky notes for your digital brain."
     },
     {
@@ -30,8 +30,8 @@ const FeaturesSection = () => {
 
   return (
     <section id="features" className="pt-24 pb-32 relative overflow-hidden">
-      <div className="absolute top-40 right-0 w-96 h-96 bg-[#403E43]/5 rounded-full blur-3xl z-10"></div>
-      <div className="absolute bottom-40 left-0 w-80 h-80 bg-[#403E43]/5 rounded-full blur-3xl z-10"></div>
+      <div className="absolute top-40 right-0 w-96 h-96 bg-[#403E43]/5 rounded-full blur-3xl -z-10"></div>
+      <div className="absolute bottom-40 left-0 w-80 h-80 bg-[#403E43]/5 rounded-full blur-3xl -z-10"></div>
       
       <div className="container">
         <div className="mb-16 text-center">

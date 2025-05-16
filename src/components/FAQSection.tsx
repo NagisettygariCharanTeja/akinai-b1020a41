@@ -19,7 +19,7 @@ const FAQSection = () => {
     },
     {
       question: "Can I use it on mobile?",
-      answer: "Yes. A mobile friendly experience is part of our plan after the desktop version rolls out."
+      answer: "Yes. A mobile-friendly experience is part of our plan after the desktop version rolls out."
     }
   ];
 
@@ -29,7 +29,7 @@ const FAQSection = () => {
 
   return (
     <section id="faq" className="py-24 relative">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-[#333333]/5 rounded-full blur-3xl z-10"></div>
+      <div className="absolute top-0 right-0 w-64 h-64 bg-[#333333]/5 rounded-full blur-3xl -z-10"></div>
       <div className="container">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h2>
