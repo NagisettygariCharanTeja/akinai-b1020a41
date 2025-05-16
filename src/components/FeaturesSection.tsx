@@ -35,31 +35,21 @@ const FeaturesSection = () => {
       
       <div className="container">
         <div className="mb-16 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-shadow-lg relative inline-block">
-            Key Features
-            <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-transparent via-black to-transparent"></span>
-          </h2>
-          <p className="text-xl text-[#F5F5F5] max-w-3xl mx-auto">Designed to enhance your cognitive abilities and productivity</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Key Features</h2>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {features.map((feature, index) => (
-            <div key={index} className="group perspective transform transition-all duration-500 hover:translate-y-[-10px]">
-              <div className="frost-glass p-10 rounded-2xl h-full transition-all duration-300 border border-white/10 group-hover:border-white/30 transform group-hover:shadow-2xl relative">
-                {/* Subtle animated background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div className="flex items-center mb-6 relative z-10">
-                  <div className="mr-4 p-4 rounded-xl bg-gradient-to-r from-[#403E43]/20 to-[#222222]/20 backdrop-blur-sm group-hover:from-[#403E43]/40 group-hover:to-[#222222]/40 transition-all duration-300 shadow-lg">
+            <div key={index} className="group">
+              <div className="bg-black/10 backdrop-blur-sm p-8 rounded-xl border border-white/10 h-full transition-all duration-300 hover:border-[#403E43]/30 hover:bg-black/20">
+                <div className="flex items-center mb-6">
+                  <div className="mr-4 p-3 rounded-lg bg-gradient-to-r from-[#403E43]/20 to-[#222222]/20 backdrop-blur-sm group-hover:from-[#403E43]/30 group-hover:to-[#222222]/30 transition-all duration-300">
                     {feature.icon}
                   </div>
                   <h3 className="text-2xl md:text-3xl font-bold">{feature.title}</h3>
                 </div>
-                <p className="text-lg text-[#F5F5F5] relative z-10 leading-relaxed">{feature.description}</p>
-                <div className="mt-8 w-12 h-1 bg-gradient-to-r from-[#403E43] to-[#222222] rounded-full group-hover:w-24 transition-all duration-700"></div>
-                
-                {/* Decorative circle */}
-                <div className="absolute bottom-4 right-4 w-16 h-16 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <p className="text-lg text-[#F5F5F5]">{feature.description}</p>
+                <div className="mt-6 w-12 h-1 bg-gradient-to-r from-[#403E43] to-[#222222] rounded-full group-hover:w-24 transition-all duration-300"></div>
               </div>
             </div>
           ))}

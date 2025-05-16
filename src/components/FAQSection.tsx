@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 
 const FAQSection = () => {
-  const [activeIndex, setActiveIndex] = useState<number | null>(0);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   
   const faqs = [
     {
@@ -30,44 +30,31 @@ const FAQSection = () => {
   return (
     <section id="faq" className="py-24 relative">
       <div className="absolute top-0 right-0 w-64 h-64 bg-[#333333]/5 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#333333]/5 rounded-full blur-3xl -z-10"></div>
-      
       <div className="container">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-shadow-lg relative inline-block">
-            Frequently Asked Questions
-            <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-transparent via-black to-transparent"></span>
-          </h2>
-          <p className="text-xl text-[#F5F5F5] max-w-3xl mx-auto">Everything you need to know about akinAI</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h2>
         </div>
         
         <div className="max-w-3xl mx-auto space-y-6">
           {faqs.map((faq, index) => (
-            <div 
-              key={index} 
-              className={`frost-glass rounded-2xl border transition-all duration-500 overflow-hidden ${
-                activeIndex === index
-                  ? "border-white/30 shadow-2xl"
-                  : "border-white/10 hover:border-white/20"
-              }`}
-            >
+            <div key={index} className="bg-black/10 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden">
               <button 
-                className="w-full text-left p-6 md:p-8 flex justify-between items-center hover:bg-black/10 transition-colors duration-300"
+                className="w-full text-left p-6 flex justify-between items-center hover:bg-black/20 transition-all duration-300"
                 onClick={() => toggleFAQ(index)}
               >
-                <h3 className="text-xl md:text-2xl font-bold text-shadow-sm">{faq.question}</h3>
-                <span className={`transform transition-transform duration-500 text-white ${activeIndex === index ? 'rotate-180' : ''}`}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <h3 className="text-xl font-bold">{faq.question}</h3>
+                <span className={`transform transition-transform duration-300 ${activeIndex === index ? 'rotate-180' : ''}`}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 9L12 15L18 9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </span>
               </button>
               <div 
-                className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                  activeIndex === index ? 'max-h-96' : 'max-h-0'
+                className={`overflow-hidden transition-all duration-300 ${
+                  activeIndex === index ? 'max-h-40' : 'max-h-0'
                 }`}
               >
-                <p className="p-6 md:p-8 pt-0 text-[#F5F5F5] border-t border-white/10 text-lg leading-relaxed">{faq.answer}</p>
+                <p className="p-6 pt-0 text-[#F5F5F5] border-t border-white/5">{faq.answer}</p>
               </div>
             </div>
           ))}
