@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from 'react';
-import { BrainCircuit, Memory, Smartphone, HeartHandshake, Fingerprint, Code } from 'lucide-react';
+import { BrainCircuit, BookOpen, Smartphone, HeartHandshake, Fingerprint, Code } from 'lucide-react';
 
 interface FeatureProps {
   icon: React.ReactNode;
@@ -59,7 +59,7 @@ const FeaturesSection = () => {
       delay: 0
     },
     {
-      icon: <Memory size={28} />,
+      icon: <BookOpen size={28} />,
       title: "Memory-Powered Conversations",
       description: "Unlike standard assistants, AkinAI remembers your previous interactions and builds on shared knowledge.",
       delay: 100
