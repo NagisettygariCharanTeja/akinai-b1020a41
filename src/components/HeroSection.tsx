@@ -1,10 +1,38 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const HeroSection = () => {
+  const [days, setDays] = useState<number>(30);
+  const [hours, setHours] = useState<number>(0);
+  const [minutes, setMinutes] = useState<number>(0);
+  const [seconds, setSeconds] = useState<number>(0);
+
+  useEffect(() => {
+    // Set launch date to 30 days from now for promotional purposes
+    const launchDate = new Date();
+    launchDate.setDate(launchDate.getDate() + 30);
+    
+    const interval = setInterval(() => {
+      const now = new Date();
+      const difference = launchDate.getTime() - now.getTime();
+      
+      const d = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((difference % (1000 * 60)) / 1000);
+      
+      setDays(d);
+      setHours(h);
+      setMinutes(m);
+      setSeconds(s);
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section id="hero" className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">      
       <div className="container relative z-10">
@@ -29,6 +57,46 @@ const HeroSection = () => {
               akinAI isn't just another AI app — it's your cognitive companion, learning from you, helping you
               think better, plan smarter, and never forget what matters.
             </p>
+            
+            {/* Launch Countdown */}
+            <div className="mt-10 mb-8">
+              <p className="text-lg text-[#F5F5F5] mb-4">Launching in:</p>
+              <div className="flex justify-center space-x-4 sm:space-x-6">
+                <div className="flex flex-col items-center">
+                  <div className="bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10">
+                    <span className="text-2xl sm:text-3xl font-bold text-white">{days}</span>
+                  </div>
+                  <span className="text-sm mt-2 text-[#F5F5F5]">Days</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10">
+                    <span className="text-2xl sm:text-3xl font-bold text-white">{hours}</span>
+                  </div>
+                  <span className="text-sm mt-2 text-[#F5F5F5]">Hours</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10">
+                    <span className="text-2xl sm:text-3xl font-bold text-white">{minutes}</span>
+                  </div>
+                  <span className="text-sm mt-2 text-[#F5F5F5]">Minutes</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10">
+                    <span className="text-2xl sm:text-3xl font-bold text-white">{seconds}</span>
+                  </div>
+                  <span className="text-sm mt-2 text-[#F5F5F5]">Seconds</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Call to action button */}
+            <div className="mt-6">
+              <a href="#early-access">
+                <Button className="bg-gradient-to-r from-[#333333] to-[#222222] text-white px-8 py-6 text-lg hover:opacity-90 h-auto">
+                  Get Early Access
+                </Button>
+              </a>
+            </div>
           </div>
         </div>
       </div>

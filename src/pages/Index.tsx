@@ -8,6 +8,7 @@ import WhySection from '@/components/WhySection';
 import MissionSection from '@/components/MissionSection';
 import CallToActionSection from '@/components/CallToActionSection';
 import FAQSection from '@/components/FAQSection';
+import DemoSection from '@/components/DemoSection';
 import Footer from '@/components/Footer';
 
 const Index = () => {
@@ -22,6 +23,7 @@ const Index = () => {
         <HeroSection />
         <WhatIsSection />
         <FeaturesSection />
+        <DemoSection />
         <WhySection />
         <MissionSection />
         <CallToActionSection />
