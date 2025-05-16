@@ -15,7 +15,7 @@ const WhatIsSection = () => {
                 <div className="bg-gradient-to-r from-[#403E43] to-[#222222] p-3 inline-flex rounded-full mb-6">
                   <Zap className="text-white h-6 w-6" />
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold mb-6">What is <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>?</h2>
+                <h2 className="text-4xl md:text-5xl font-bold mb-6">What is <span className="text-black fancy-border">akin</span><span className="text-[#D9D9D9]">AI</span>?</h2>
                 <p className="text-lg md:text-xl text-[#F5F5F5] max-w-3xl">
                   akinAI is an AI powered digital assistant designed to mirror your thinking patterns, 
                   organize your digital life, and spark creativity like a true second brain.

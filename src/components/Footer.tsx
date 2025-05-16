@@ -22,7 +22,7 @@ const Footer = () => {
             </div>
             
             <div>
-              <h3 className="font-bold mb-4">Quick Links</h3>
+              <h3 className="font-bold mb-4 fancy-border inline-block">Quick Links</h3>
               <ul className="space-y-2 text-[#F5F5F5]">
                 <li><a href="#what-is" className="hover:text-white transition-colors fancy-border">What is akinAI?</a></li>
                 <li><a href="#features" className="hover:text-white transition-colors fancy-border">Key Features</a></li>

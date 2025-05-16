@@ -35,7 +35,7 @@ const FeaturesSection = () => {
       
       <div className="container">
         <div className="mb-16 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Key Features</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 fancy-border">Key Features</h2>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">

@@ -32,7 +32,7 @@ const FAQSection = () => {
       <div className="absolute top-0 right-0 w-64 h-64 bg-[#333333]/5 rounded-full blur-3xl -z-10"></div>
       <div className="container">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 fancy-border">Frequently Asked Questions</h2>
         </div>
         
         <div className="max-w-3xl mx-auto space-y-6">
