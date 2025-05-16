@@ -22,12 +22,15 @@ const Footer = () => {
             </div>
             
             <div>
-              <h3 className="font-bold mb-4 fancy-border inline-block">Quick Links</h3>
+              <h3 className="font-bold mb-4 relative inline-block">
+                Quick Links
+                <div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+              </h3>
               <ul className="space-y-2 text-[#F5F5F5]">
-                <li><a href="#what-is" className="hover:text-white transition-colors fancy-border">What is akinAI?</a></li>
-                <li><a href="#features" className="hover:text-white transition-colors fancy-border">Key Features</a></li>
-                <li><a href="#why" className="hover:text-white transition-colors fancy-border">Why akinAI?</a></li>
-                <li><a href="#mission" className="hover:text-white transition-colors fancy-border">Our Mission</a></li>
+                <li><a href="#what-is" className="hover:text-white transition-colors relative inline-block">What is akinAI?<div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div></a></li>
+                <li><a href="#features" className="hover:text-white transition-colors relative inline-block">Key Features<div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div></a></li>
+                <li><a href="#why" className="hover:text-white transition-colors relative inline-block">Why akinAI?<div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div></a></li>
+                <li><a href="#mission" className="hover:text-white transition-colors relative inline-block">Our Mission<div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div></a></li>
               </ul>
             </div>
           </div>

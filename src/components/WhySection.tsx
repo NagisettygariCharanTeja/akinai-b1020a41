@@ -14,7 +14,12 @@ const WhySection = () => {
                 <div className="absolute -top-4 -left-4 bg-[#685B60] p-2 rounded-full border border-white/20">
                   <Lightbulb className="text-[#403E43] h-6 w-6" />
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold mb-6 mt-4">Why <span className="text-black fancy-border">akin</span><span className="text-[#D9D9D9]">AI</span>?</h2>
+                <h2 className="text-4xl md:text-5xl font-bold mb-6 mt-4">
+                  <span className="relative inline-block">
+                    Why <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>?
+                    <div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                  </span>
+                </h2>
                 <p className="text-lg md:text-xl text-[#F5F5F5] max-w-3xl">
                   Other tools just help you "do."<br />
                   akinAI helps you think. It organizes not just tasks but ideas, insights, and intentions.<br />

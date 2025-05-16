@@ -63,7 +63,12 @@ const HeroSection = () => {
             
             {/* Launch Countdown */}
             <div className="mt-10 mb-8">
-              <p className="text-lg text-[#F5F5F5] mb-4 fancy-border">Launching in:</p>
+              <p className="text-lg text-[#F5F5F5] mb-4 relative">
+                <span className="relative inline-block">
+                  Launching in:
+                  <div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                </span>
+              </p>
               <div className="flex justify-center space-x-4 sm:space-x-6">
                 <div className="flex flex-col items-center">
                   <div className="frost-glass hover-lift transition-all duration-300 bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-white/40">

@@ -35,7 +35,10 @@ const FeaturesSection = () => {
       
       <div className="container">
         <div className="mb-16 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 fancy-border">Key Features</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 relative inline-block">
+            Key Features
+            <div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+          </h2>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">

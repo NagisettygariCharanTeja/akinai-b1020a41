@@ -42,7 +42,10 @@ const CallToActionSection = () => {
           <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#222222]/10 rounded-full blur-xl"></div>
           
           <div className="bg-black/10 backdrop-blur-sm p-12 rounded-xl border border-white/10 relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Be the First to Know</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 relative inline-block">
+              Be the First to Know
+              <div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+            </h2>
             <p className="text-lg md:text-xl text-[#F5F5F5] mb-8">
               We're building something truly different — and you're invited to be part of it.
             </p>
