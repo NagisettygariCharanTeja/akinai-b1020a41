@@ -10,9 +10,10 @@ const Footer = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
             <div>
               <div className="mb-6 flex flex-col items-center md:items-start">
-                <div className="font-dm-sans font-bold text-2xl">
+                <div className="font-dm-sans font-bold text-2xl relative">
                   <span className="text-black">akin</span>
                   <span className="text-[#D9D9D9]">AI</span>
+                  <div className="absolute -bottom-2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
                 </div>
               </div>
               <p className="text-sm text-[#F5F5F5] max-w-xs">
@@ -23,10 +24,10 @@ const Footer = () => {
             <div>
               <h3 className="font-bold mb-4">Quick Links</h3>
               <ul className="space-y-2 text-[#F5F5F5]">
-                <li><a href="#what-is" className="hover:text-white transition-colors">What is akinAI?</a></li>
-                <li><a href="#features" className="hover:text-white transition-colors">Key Features</a></li>
-                <li><a href="#why" className="hover:text-white transition-colors">Why akinAI?</a></li>
-                <li><a href="#mission" className="hover:text-white transition-colors">Our Mission</a></li>
+                <li><a href="#what-is" className="hover:text-white transition-colors fancy-border">What is akinAI?</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors fancy-border">Key Features</a></li>
+                <li><a href="#why" className="hover:text-white transition-colors fancy-border">Why akinAI?</a></li>
+                <li><a href="#mission" className="hover:text-white transition-colors fancy-border">Our Mission</a></li>
               </ul>
             </div>
           </div>

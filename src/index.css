@@ -114,6 +114,32 @@
   }
 }
 
+/* Added custom classes for the effects */
+.frost-glass {
+  @apply backdrop-blur-md bg-white/5 shadow-lg;
+}
+
+.hover-lift {
+  @apply transform transition duration-300 hover:-translate-y-1;
+}
+
+.text-glow {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.fancy-border {
+  @apply relative inline-block;
+}
+
+.fancy-border::after {
+  content: '';
+  @apply absolute left-0 bottom-0 w-0 h-0.5 bg-white transition-all duration-300 ease-out;
+}
+
+.fancy-border:hover::after {
+  @apply w-full;
+}
+
 .wave-bg {
   position: absolute;
   left: 0;

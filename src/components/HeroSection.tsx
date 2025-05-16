@@ -32,7 +32,12 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section id="hero" className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">      
+    <section id="hero" className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute top-20 left-20 w-72 h-72 rounded-full bg-black/10 blur-3xl"></div>
+      <div className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-black/10 blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/10 to-transparent"></div>
+      
       <div className="container relative z-10">
         <div className="flex flex-col items-center">
           <div className="mb-12 text-center">
@@ -58,29 +63,29 @@ const HeroSection = () => {
             
             {/* Launch Countdown */}
             <div className="mt-10 mb-8">
-              <p className="text-lg text-[#F5F5F5] mb-4">Launching in:</p>
+              <p className="text-lg text-[#F5F5F5] mb-4 group relative inline-block fancy-border">Launching in:</p>
               <div className="flex justify-center space-x-4 sm:space-x-6">
                 <div className="flex flex-col items-center">
-                  <div className="bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10">
-                    <span className="text-2xl sm:text-3xl font-bold text-white">{days}</span>
+                  <div className="frost-glass hover-lift transition-all duration-300 bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-white/40">
+                    <span className="text-2xl sm:text-3xl font-bold text-white text-glow">{days}</span>
                   </div>
                   <span className="text-sm mt-2 text-[#F5F5F5]">Days</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10">
-                    <span className="text-2xl sm:text-3xl font-bold text-white">{hours}</span>
+                  <div className="frost-glass hover-lift transition-all duration-300 bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-white/40">
+                    <span className="text-2xl sm:text-3xl font-bold text-white text-glow">{hours}</span>
                   </div>
                   <span className="text-sm mt-2 text-[#F5F5F5]">Hours</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10">
-                    <span className="text-2xl sm:text-3xl font-bold text-white">{minutes}</span>
+                  <div className="frost-glass hover-lift transition-all duration-300 bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-white/40">
+                    <span className="text-2xl sm:text-3xl font-bold text-white text-glow">{minutes}</span>
                   </div>
                   <span className="text-sm mt-2 text-[#F5F5F5]">Minutes</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10">
-                    <span className="text-2xl sm:text-3xl font-bold text-white">{seconds}</span>
+                  <div className="frost-glass hover-lift transition-all duration-300 bg-black/20 backdrop-blur-sm w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-white/40">
+                    <span className="text-2xl sm:text-3xl font-bold text-white text-glow">{seconds}</span>
                   </div>
                   <span className="text-sm mt-2 text-[#F5F5F5]">Seconds</span>
                 </div>
