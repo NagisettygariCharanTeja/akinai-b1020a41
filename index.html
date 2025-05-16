@@ -20,15 +20,29 @@
     <!-- SEO Keywords -->
     <meta name="keywords" content="AkinAI, Conversational AI, Personal AI Assistant, Emotional Intelligence, AI Memory, AI Companion" />
     
-    <!-- Favicon - Updated with version parameter to prevent caching -->
-    <link rel="icon" href="/lovable-uploads/2c41af19-fc53-4bcb-b9ff-ec50574ff013.png?v=2" type="image/png">
-    <link rel="shortcut icon" href="/lovable-uploads/2c41af19-fc53-4bcb-b9ff-ec50574ff013.png?v=2" type="image/png">
-    <link rel="apple-touch-icon" href="/lovable-uploads/2c41af19-fc53-4bcb-b9ff-ec50574ff013.png?v=2">
+    <!-- Favicon with stronger cache busting -->
+    <link rel="icon" href="/lovable-uploads/2c41af19-fc53-4bcb-b9ff-ec50574ff013.png?v=20250516" type="image/png">
+    <link rel="shortcut icon" href="/lovable-uploads/2c41af19-fc53-4bcb-b9ff-ec50574ff013.png?v=20250516" type="image/png">
+    <link rel="apple-touch-icon" href="/lovable-uploads/2c41af19-fc53-4bcb-b9ff-ec50574ff013.png?v=20250516">
     
-    <!-- Force favicon refresh -->
-    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
-    <meta http-equiv="expires" content="0">
+    <!-- Force favicon refresh with stronger cache controls -->
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate, private">
+    <meta http-equiv="expires" content="-1">
     <meta http-equiv="pragma" content="no-cache">
+    
+    <!-- Additional head cleanup to force favicon refresh -->
+    <script>
+      // Force favicon refresh by dynamically setting favicon with timestamp
+      window.onload = function() {
+        var link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'icon';
+          document.head.appendChild(link);
+        }
+        link.href = '/lovable-uploads/2c41af19-fc53-4bcb-b9ff-ec50574ff013.png?t=' + new Date().getTime();
+      }
+    </script>
   </head>
 
   <body>
