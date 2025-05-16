@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 
@@ -41,11 +40,11 @@ const HeroSection = () => {
       <div className="container relative z-10">
         <div className="flex flex-col items-center">
           <div className="mb-12 text-center">
-            {/* Just the logo */}
+            {/* Updated logo using the uploaded image */}
             <div className="mb-6 flex flex-col items-center">
               <div className="w-32 h-32 flex justify-center">
                 <img 
-                  src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" 
+                  src="/lovable-uploads/acf06254-fa68-4a1a-aafd-efe7681ed15e.png" 
                   alt="akinAI logo" 
                   className="w-full h-full object-contain"
                 />
