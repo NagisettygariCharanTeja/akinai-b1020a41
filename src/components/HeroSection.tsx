@@ -9,11 +9,16 @@ const HeroSection = () => {
       <div className="container relative z-10">
         <div className="flex flex-col items-center">
           <div className="mb-12 text-center">
-            {/* Logo as text */}
+            {/* Just the logo */}
             <div className="mb-6 flex flex-col items-center">
-              <h1 className="font-dm-sans text-5xl font-bold">
-                <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>
-              </h1>
+              <h1 className="text-3xl font-bold mb-3">akinAI</h1>
+              <div className="w-24 h-24 flex justify-center">
+                <img 
+                  src="/lovable-uploads/498b32f0-ef05-49b3-b86d-78e40827b8b4.png" 
+                  alt="akinAI logo" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
             </div>
 
             <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-black leading-tight mb-8 max-w-4xl mx-auto">
