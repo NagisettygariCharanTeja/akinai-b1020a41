@@ -56,11 +56,10 @@ const HeroSection = () => {
               </div>
             </div>
 
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-black leading-tight mb-8 max-w-4xl mx-auto text-shadow-lg">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-black leading-tight mb-8 max-w-4xl mx-auto">
               Your Mind's<br />
-              <span className="relative inline-block">
+              <span className="inline-block">
                 Second Brain
-                <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-transparent via-black to-transparent"></span>
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-[#F5F5F5] max-w-2xl mx-auto leading-tight backdrop-blur-sm py-2 text-shadow-sm">
