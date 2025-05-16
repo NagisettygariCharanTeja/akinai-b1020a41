@@ -35,36 +35,40 @@ const CallToActionSection = () => {
   };
 
   return (
-    <section id="early-access" className="py-24">
+    <section id="early-access" className="py-24 relative">
       <div className="container">
-        <div className="max-w-3xl">
-          <div className="text-2xl mb-2">🚀</div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Be the First to Know</h2>
-          <p className="text-lg md:text-xl text-[#F5F5F5] mb-8">
-            We're building something truly different — and you're invited to be part of it.
-          </p>
+        <div className="max-w-3xl mx-auto relative">
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#333333]/10 rounded-full blur-xl"></div>
+          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#222222]/10 rounded-full blur-xl"></div>
           
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1">
-              <Input
-                type="email"
-                placeholder="Your email address"
-                className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <Button 
-              type="submit" 
-              className="h-12 bg-white text-black hover:bg-white/90 font-semibold"
-              disabled={isLoading}
-            >
-              {isLoading ? "Processing..." : "Request Early Access"}
-            </Button>
-          </form>
-          <p className="text-sm text-[#F5F5F5] opacity-70 mt-3">
-            We respect your inbox. No spam — only launch updates & early access opportunities.
-          </p>
+          <div className="bg-black/10 backdrop-blur-sm p-12 rounded-xl border border-white/10 relative z-10">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Be the First to Know</h2>
+            <p className="text-lg md:text-xl text-[#F5F5F5] mb-8">
+              We're building something truly different — and you're invited to be part of it.
+            </p>
+            
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1">
+                <Input
+                  type="email"
+                  placeholder="Your email address"
+                  className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="h-12 bg-gradient-to-r from-[#333333] to-[#222222] text-white hover:opacity-90 font-semibold"
+                disabled={isLoading}
+              >
+                {isLoading ? "Processing..." : "Request Early Access"}
+              </Button>
+            </form>
+            <p className="text-sm text-[#F5F5F5] opacity-70 mt-3">
+              We respect your inbox. No spam — only launch updates & early access opportunities.
+            </p>
+          </div>
         </div>
       </div>
     </section>

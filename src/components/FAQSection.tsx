@@ -29,14 +29,9 @@ const FAQSection = () => {
 
   return (
     <section id="faq" className="py-24 relative">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-akin-blue/5 rounded-full blur-3xl -z-10"></div>
+      <div className="absolute top-0 right-0 w-64 h-64 bg-[#333333]/5 rounded-full blur-3xl -z-10"></div>
       <div className="container">
         <div className="text-center mb-16">
-          <div className="inline-block p-2 bg-black/20 backdrop-blur-sm rounded-xl border border-white/10 mb-6">
-            <div className="bg-gradient-to-r from-akin-purple to-akin-blue p-2 rounded-lg">
-              <span className="text-white font-bold">FAQ</span>
-            </div>
-          </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h2>
         </div>
         

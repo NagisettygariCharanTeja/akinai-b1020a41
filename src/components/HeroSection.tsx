@@ -9,13 +9,13 @@ const HeroSection = () => {
       <div className="container relative z-10">
         <div className="flex flex-col items-center">
           <div className="mb-12 text-center">
-            {/* AkinAI Logo with arrow */}
+            {/* akinAI Logo with arrow */}
             <div className="mb-6 flex flex-col items-center">
-              <div className="text-[#F5F5F5] text-xl mb-1">akinAI</div>
+              <div className="text-[#F5F5F5] text-xl mb-1">
+                <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>
+              </div>
               <div className="w-10 h-10">
-                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 0L40 20H30L20 10L10 20H0L20 0Z" fill="black"/>
-                </svg>
+                <img src="/lovable-uploads/7a6d40d9-9c7f-4982-ac8c-f2108c83ddc8.png" alt="akinAI logo" className="w-full h-full" />
               </div>
             </div>
 
@@ -24,7 +24,7 @@ const HeroSection = () => {
             </h1>
             <p className="text-xl md:text-2xl text-[#F5F5F5] max-w-2xl mx-auto leading-tight">
               Welcome to the future of productivity, creativity, and memory.
-              AkinAI isn't just another AI app — it's your cognitive companion, learning from you, helping you
+              akinAI isn't just another AI app — it's your cognitive companion, learning from you, helping you
               think better, plan smarter, and never forget what matters.
             </p>
           </div>

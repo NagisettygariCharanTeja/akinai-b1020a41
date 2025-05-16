@@ -9,7 +9,7 @@ const CreatorSection = () => {
         <div className="flex flex-col md:flex-row items-center gap-12">
           <div className="md:w-1/3">
             <div className="relative w-64 h-64 mx-auto">
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-800/30 to-gray-900/30 rounded-full"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#403E43]/30 to-[#222222]/30 rounded-full"></div>
               <div className="absolute inset-3 bg-black/40 backdrop-blur-sm rounded-full border border-white/10 overflow-hidden">
                 <div className="w-full h-full flex items-center justify-center p-6">
                   <div className="text-lg font-medium text-center">Charan Teja Nagisettygari</div>
@@ -32,7 +32,6 @@ const CreatorSection = () => {
                   <p className="font-bold text-right">Charan Teja Nagisettygari</p>
                   <p className="text-sm text-[#F5F5F5] text-right">Creator of AkinAI</p>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-r from-gray-700 to-gray-900 rounded-full"></div>
               </div>
             </div>
           </div>
