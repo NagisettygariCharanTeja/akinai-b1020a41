@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Mail, Github, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -24,18 +23,6 @@ const Footer = () => {
               <p className="text-md text-[#F5F5F5] max-w-xs leading-relaxed text-center md:text-left">
                 Your mind's second brain, helping you think better, plan smarter, and never forget what matters.
               </p>
-              
-              <div className="flex space-x-4 mt-6 justify-center md:justify-start">
-                <a href="#" className="p-2 frost-glass rounded-full hover:bg-white/10 transition-colors duration-300">
-                  <Github size={20} className="text-white/80 hover:text-white transition-colors" />
-                </a>
-                <a href="#" className="p-2 frost-glass rounded-full hover:bg-white/10 transition-colors duration-300">
-                  <Linkedin size={20} className="text-white/80 hover:text-white transition-colors" />
-                </a>
-                <a href="#" className="p-2 frost-glass rounded-full hover:bg-white/10 transition-colors duration-300">
-                  <Mail size={20} className="text-white/80 hover:text-white transition-colors" />
-                </a>
-              </div>
             </div>
             
             <div className="md:col-span-2">

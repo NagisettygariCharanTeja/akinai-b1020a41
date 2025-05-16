@@ -1,24 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  // Check system preference for dark mode
-  useEffect(() => {
-    const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setIsDarkMode(darkModeQuery.matches);
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      setIsDarkMode(e.matches);
-    };
-    
-    darkModeQuery.addEventListener('change', handleChange);
-    return () => darkModeQuery.removeEventListener('change', handleChange);
-  }, []);
   
   // Handle scroll effect
   useEffect(() => {
@@ -33,12 +19,6 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
-  };
 
   const navLinks = [
     { name: "What is AkinAI", href: "#what-is" },
@@ -75,47 +55,14 @@ const Navbar = () => {
             ))}
           </div>
           
-          {/* Desktop Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleDarkMode}
-              className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm rounded-full w-10 h-10"
-            >
-              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-            <Button 
-              variant="outline" 
-              className="border-white/20 text-white hover:bg-white/10 hover:border-white/30 backdrop-blur-sm rounded-xl px-5"
-            >
-              Login
-            </Button>
-            <Button 
-              className="premium-button rounded-xl text-white px-5 shadow-lg hover:shadow-xl backdrop-blur-sm"
-            >
-              Join Waitlist
-            </Button>
-          </div>
-          
           {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleDarkMode}
-              className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm rounded-full w-10 h-10"
-            >
-              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon"
+          <div className="flex md:hidden items-center">
+            <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm rounded-full w-10 h-10"
+              className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
+            </button>
           </div>
         </div>
       </div>
@@ -134,19 +81,6 @@ const Navbar = () => {
                 {link.name}
               </a>
             ))}
-            <div className="pt-4 flex flex-col space-y-4 border-t border-white/10">
-              <Button 
-                variant="outline" 
-                className="w-full justify-center border-white/20 text-white hover:bg-white/10 hover:border-white/30 backdrop-blur-sm rounded-xl"
-              >
-                Login
-              </Button>
-              <Button 
-                className="w-full justify-center premium-button rounded-xl text-white shadow-lg hover:shadow-xl"
-              >
-                Join Waitlist
-              </Button>
-            </div>
           </div>
         </div>
       )}
