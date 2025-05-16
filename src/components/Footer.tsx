@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Mail, Github, Twitter, Linkedin } from 'lucide-react';
+import { Mail, Github, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -27,9 +27,6 @@ const Footer = () => {
               
               <div className="flex space-x-4 mt-6 justify-center md:justify-start">
                 <a href="#" className="p-2 frost-glass rounded-full hover:bg-white/10 transition-colors duration-300">
-                  <Twitter size={20} className="text-white/80 hover:text-white transition-colors" />
-                </a>
-                <a href="#" className="p-2 frost-glass rounded-full hover:bg-white/10 transition-colors duration-300">
                   <Github size={20} className="text-white/80 hover:text-white transition-colors" />
                 </a>
                 <a href="#" className="p-2 frost-glass rounded-full hover:bg-white/10 transition-colors duration-300">
@@ -47,8 +44,6 @@ const Footer = () => {
                   <h3 className="font-bold text-xl mb-4 text-shadow-sm">Product</h3>
                   <ul className="space-y-3 text-[#F5F5F5]">
                     <li><a href="#what-is" className="hover:text-white transition-colors fancy-border">What is akinAI?</a></li>
-                    <li><a href="#features" className="hover:text-white transition-colors fancy-border">Key Features</a></li>
-                    <li><a href="#why" className="hover:text-white transition-colors fancy-border">Why akinAI?</a></li>
                     <li><a href="#faq" className="hover:text-white transition-colors fancy-border">FAQs</a></li>
                   </ul>
                 </div>

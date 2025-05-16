@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Sun, Moon } from 'lucide-react';
@@ -42,8 +41,7 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { name: "Features", href: "#features" },
-    { name: "Why AkinAI", href: "#why" },
+    { name: "What is AkinAI", href: "#what-is" },
     { name: "FAQs", href: "#faq" },
     { name: "Early Access", href: "#early-access" },
   ];
