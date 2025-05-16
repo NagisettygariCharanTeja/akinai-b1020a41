@@ -1,5 +1,8 @@
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Facebook, Twitter, Instagram, Github, Linkedin } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 const Footer = () => {
   return (
@@ -7,7 +10,7 @@ const Footer = () => {
       <div className="absolute inset-0 bg-black/10 -z-10"></div>
       <div className="container">
         <div className="border-t border-white/20 pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
             <div>
               <div className="mb-6 flex flex-col items-center md:items-start">
                 <h2 className="font-dm-sans text-2xl font-bold">
@@ -17,6 +20,23 @@ const Footer = () => {
               <p className="text-sm text-[#F5F5F5] max-w-xs">
                 Your mind's second brain, helping you think better, plan smarter, and never forget what matters.
               </p>
+              <div className="mt-4 flex space-x-4">
+                <a href="#" className="text-[#F5F5F5] hover:text-white transition-colors">
+                  <Twitter className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-[#F5F5F5] hover:text-white transition-colors">
+                  <Facebook className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-[#F5F5F5] hover:text-white transition-colors">
+                  <Instagram className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-[#F5F5F5] hover:text-white transition-colors">
+                  <Linkedin className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-[#F5F5F5] hover:text-white transition-colors">
+                  <Github className="h-5 w-5" />
+                </a>
+              </div>
             </div>
             
             <div>
@@ -27,6 +47,21 @@ const Footer = () => {
                 <li><a href="#why" className="hover:text-white transition-colors">Why akinAI?</a></li>
                 <li><a href="#mission" className="hover:text-white transition-colors">Our Mission</a></li>
               </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-bold mb-4">Stay Updated</h3>
+              <p className="text-sm text-[#F5F5F5] mb-3">Subscribe to our newsletter for updates</p>
+              <div className="flex space-x-2">
+                <Input 
+                  type="email" 
+                  placeholder="Your email" 
+                  className="bg-white/10 border-white/20 text-[#F5F5F5] placeholder:text-[#F5F5F5]/50"
+                />
+                <Button variant="outline" className="border-white/20 text-[#F5F5F5] hover:bg-white/10">
+                  Subscribe
+                </Button>
+              </div>
             </div>
           </div>
           
