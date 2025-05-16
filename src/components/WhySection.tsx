@@ -17,8 +17,8 @@ const WhySection = () => {
                 <h2 className="text-4xl md:text-5xl font-bold mb-6 mt-4">Why <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>?</h2>
                 <p className="text-lg md:text-xl text-[#F5F5F5] max-w-3xl">
                   Other tools just help you "do."<br />
-                  akinAI helps you think. It organizes not just tasks — but ideas, insights, and intentions.<br />
-                  It's built for thinkers, builders, dreamers — anyone who wants to extend their mind.
+                  akinAI helps you think. It organizes not just tasks but ideas, insights, and intentions.<br />
+                  It's built for thinkers, builders, dreamers anyone who wants to extend their mind.
                 </p>
               </div>
             </div>

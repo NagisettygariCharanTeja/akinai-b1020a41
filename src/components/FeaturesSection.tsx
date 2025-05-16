@@ -12,7 +12,7 @@ const FeaturesSection = () => {
       icon: <SquareSplitVertical size={28} />,
       emoji: "🔲",
       title: "Split Screen Multitasking",
-      description: "Use multiple AI threads side-by-side. Compare ideas, plan projects, or talk with two different personas — all in one view. Imagine ChatGPT meets your personal workspace — and they work together."
+      description: "Use multiple AI threads side by side. Compare ideas, plan projects, or talk with two different personas all in one view. Imagine ChatGPT meets your personal workspace and they work together."
     },
     {
       icon: <Pin size={28} />,

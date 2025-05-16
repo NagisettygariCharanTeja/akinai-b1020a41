@@ -52,7 +52,7 @@ const HeroSection = () => {
             </h1>
             <p className="text-xl md:text-2xl text-[#F5F5F5] max-w-2xl mx-auto leading-tight">
               Welcome to the future of productivity, creativity, and memory.
-              akinAI isn't just another AI app — it's your cognitive companion, learning from you, helping you
+              akinAI isn't just another AI app it's your cognitive companion, learning from you, helping you
               think better, plan smarter, and never forget what matters.
             </p>
             
