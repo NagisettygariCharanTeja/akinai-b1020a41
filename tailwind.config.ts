@@ -66,8 +66,8 @@ export default {
 				akin: {
 					purple: '#3A0CA3',
 					blue: '#4CC9F0',
-					white: '#F8F9FA',
-					dark: '#1C1C1E',
+					white: '#F5F5F5',
+					dark: '#685B60',
 					'electric-purple': '#7209B7'
 				}
 			},
@@ -127,6 +127,7 @@ export default {
 			fontFamily: {
 				'poppins': ['Poppins', 'sans-serif'],
 				'inter': ['Inter', 'sans-serif'],
+				'dm-sans': ['"DM Sans"', 'sans-serif'],
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

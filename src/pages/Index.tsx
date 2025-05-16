@@ -2,30 +2,32 @@
 import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
+import WhatIsSection from '@/components/WhatIsSection';
 import FeaturesSection from '@/components/FeaturesSection';
-import DifferenceSection from '@/components/DifferenceSection';
-import DemoSection from '@/components/DemoSection';
-import TestimonialsSection from '@/components/TestimonialsSection';
+import WhySection from '@/components/WhySection';
+import MissionSection from '@/components/MissionSection';
 import CallToActionSection from '@/components/CallToActionSection';
+import FAQSection from '@/components/FAQSection';
+import CreatorSection from '@/components/CreatorSection';
 import Footer from '@/components/Footer';
 
 const Index = () => {
   // Update the title
   useEffect(() => {
-    document.title = "AkinAI - Your Conversational Companion with Real Intelligence";
+    document.title = "AkinAI - Your Mind's Second Brain";
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
       <main className="flex-grow">
         <HeroSection />
+        <WhatIsSection />
         <FeaturesSection />
-        <DifferenceSection />
-        <DemoSection />
-        <TestimonialsSection />
+        <WhySection />
+        <MissionSection />
         <CallToActionSection />
+        <FAQSection />
+        <CreatorSection />
       </main>
       
       <Footer />
