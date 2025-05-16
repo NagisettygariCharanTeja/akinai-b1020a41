@@ -113,18 +113,6 @@ export default {
 				'pulse': {
 					'0%, 100%': { opacity: '1' },
 					'50%': { opacity: '0.7' }
-				},
-				'shimmer': {
-					'0%': { backgroundPosition: '-1000px 0' },
-					'100%': { backgroundPosition: '1000px 0' }
-				},
-				'spin-slow': {
-					'0%': { transform: 'rotate(0deg)' },
-					'100%': { transform: 'rotate(360deg)' }
-				},
-				'breathe': {
-					'0%, 100%': { transform: 'scale(1)' },
-					'50%': { transform: 'scale(1.03)' }
 				}
 			},
 			animation: {
@@ -134,13 +122,7 @@ export default {
 				'wave': 'wave 25s linear infinite',
 				'fadeIn': 'fadeIn 0.8s ease-out forwards',
 				'slideUp': 'slideUp 0.8s ease-out forwards',
-				'slideUp-delay-100': 'slideUp 0.8s ease-out 0.1s forwards',
-				'slideUp-delay-200': 'slideUp 0.8s ease-out 0.2s forwards',
-				'slideUp-delay-300': 'slideUp 0.8s ease-out 0.3s forwards',
-				'pulse': 'pulse 2s ease-in-out infinite',
-				'shimmer': 'shimmer 2s infinite linear',
-				'spin-slow': 'spin-slow 8s linear infinite',
-				'breathe': 'breathe 4s ease-in-out infinite'
+				'pulse': 'pulse 2s ease-in-out infinite'
 			},
 			fontFamily: {
 				'poppins': ['Poppins', 'sans-serif'],
@@ -150,15 +132,6 @@ export default {
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'neural-pattern': "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233a0ca3' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-				'gradient-mesh': 'radial-gradient(at 40% 20%, hsla(258, 82%, 43%, 0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, hsla(199, 95%, 72%, 0.15) 0px, transparent 50%), radial-gradient(at 0% 50%, hsla(258, 82%, 33%, 0.15) 0px, transparent 50%), radial-gradient(at 80% 50%, hsla(199, 95%, 62%, 0.15) 0px, transparent 50%), radial-gradient(at 0% 100%, hsla(258, 82%, 43%, 0.15) 0px, transparent 50%), radial-gradient(at 80% 100%, hsla(199, 95%, 72%, 0.15) 0px, transparent 50%), radial-gradient(at 0% 0%, hsla(258, 82%, 33%, 0.15) 0px, transparent 50%)',
-			},
-			boxShadow: {
-				'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
-				'glass-lg': '0 8px 32px rgba(0, 0, 0, 0.1)',
-				'glass-hover': '0 10px 40px rgba(0, 0, 0, 0.2)',
-				'premium': '0px 20px 50px -10px rgba(0, 0, 0, 0.15)',
-				'premium-hover': '0px 30px 60px -15px rgba(0, 0, 0, 0.25)',
-				'inner-glow': 'inset 0 0 5px rgba(255, 255, 255, 0.2)',
 			}
 		}
 	},
