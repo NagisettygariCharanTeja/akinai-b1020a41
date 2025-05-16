@@ -18,7 +18,7 @@ const CreatorSection = () => {
             <div className="border-t border-white/10 mt-6 pt-4 flex justify-end items-center gap-4">
               <div>
                 <p className="font-bold text-right">Charan Teja Nagisettygari</p>
-                <p className="text-sm text-[#F5F5F5] text-right">Creator of AkinAI</p>
+                <p className="text-sm text-[#F5F5F5] text-right">Creator of akinAI</p>
               </div>
             </div>
           </div>

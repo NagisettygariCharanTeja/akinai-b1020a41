@@ -11,9 +11,7 @@ const Footer = () => {
             <div>
               <div className="flex items-center mb-6">
                 <div className="mr-3">
-                  <div className="w-10 h-10 transform rotate-90">
-                    <img src="/lovable-uploads/568d5b30-b38f-4d41-86fb-8b7cfad59169.png" alt="akinAI logo" className="w-full h-full" />
-                  </div>
+                  <img src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" alt="akinAI logo" className="w-10 h-10" />
                 </div>
                 <div className="text-xl font-bold">
                   <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>
