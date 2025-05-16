@@ -11,11 +11,11 @@ const HeroSection = () => {
           <div className="mb-12 text-center">
             {/* akinAI Logo with arrow */}
             <div className="mb-6 flex flex-col items-center">
-              <div className="text-[#F5F5F5] text-xl mb-1">
+              <div className="text-[#F5F5F5] text-xl mb-4">
                 <span className="text-black">akin</span><span className="text-[#D9D9D9]">AI</span>
               </div>
-              <div className="w-10 h-10">
-                <img src="/lovable-uploads/7a6d40d9-9c7f-4982-ac8c-f2108c83ddc8.png" alt="akinAI logo" className="w-full h-full" />
+              <div className="w-12 h-12 transform rotate-90">
+                <img src="/lovable-uploads/568d5b30-b38f-4d41-86fb-8b7cfad59169.png" alt="akinAI logo" className="w-full h-full" />
               </div>
             </div>
 

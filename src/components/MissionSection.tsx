@@ -17,7 +17,7 @@ const MissionSection = () => {
                 </div>
                 <h2 className="text-4xl md:text-5xl font-bold mb-6">Our Mission</h2>
                 <div className="space-y-4">
-                  <p className="text-lg md:text-xl text-[#F5F5F5] max-w-3xl">
+                  <p className="text-base md:text-lg text-[#F5F5F5] max-w-3xl">
                     To build an AI that doesn't just answer you —<br />
                     …but understands you.<br />
                     To bridge memory and creativity, structure and spontaneity.<br />

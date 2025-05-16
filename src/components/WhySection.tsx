@@ -27,25 +27,25 @@ const WhySection = () => {
           <div className="md:w-1/2">
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-black/10 backdrop-blur-sm p-6 rounded-xl border border-white/10 hover:border-[#403E43]/50 transition-all duration-300 transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#403E43] to-white">Thinkers</h3>
+                <h3 className="text-xl font-bold mb-2 text-black">Thinkers</h3>
                 <div className="w-12 h-1 bg-[#403E43] mb-3"></div>
                 <p className="text-[#F5F5F5]">Extend your cognitive capacity and organize complex thoughts.</p>
               </div>
               
               <div className="bg-black/10 backdrop-blur-sm p-6 rounded-xl border border-white/10 hover:border-[#333333]/50 transition-all duration-300 transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#333333] to-white">Builders</h3>
+                <h3 className="text-xl font-bold mb-2 text-black">Builders</h3>
                 <div className="w-12 h-1 bg-[#333333] mb-3"></div>
                 <p className="text-[#F5F5F5]">Convert ideas into structured plans and actionable steps.</p>
               </div>
               
               <div className="bg-black/10 backdrop-blur-sm p-6 rounded-xl border border-white/10 hover:border-[#333333]/50 transition-all duration-300 transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-[#333333]">Creators</h3>
+                <h3 className="text-xl font-bold mb-2 text-black">Creators</h3>
                 <div className="w-12 h-1 bg-[#333333] mb-3"></div>
                 <p className="text-[#F5F5F5]">Find connections between ideas and spark creative insights.</p>
               </div>
               
               <div className="bg-black/10 backdrop-blur-sm p-6 rounded-xl border border-white/10 hover:border-[#403E43]/50 transition-all duration-300 transform hover:-translate-y-1">
-                <h3 className="text-xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-[#403E43]">Dreamers</h3>
+                <h3 className="text-xl font-bold mb-2 text-black">Dreamers</h3>
                 <div className="w-12 h-1 bg-[#403E43] mb-3"></div>
                 <p className="text-[#F5F5F5]">Explore possibilities and expand your mental horizons.</p>
               </div>
