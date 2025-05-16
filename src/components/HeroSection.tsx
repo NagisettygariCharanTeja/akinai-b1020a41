@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const HeroSection = () => {
   return (
@@ -12,7 +13,13 @@ const HeroSection = () => {
             {/* Just the logo */}
             <div className="mb-6 flex flex-col items-center">
               <div className="w-32 h-32 flex justify-center">
-                <img src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" alt="akinAI logo" className="w-full h-full" />
+                <AspectRatio ratio={1/1} className="w-full">
+                  <img 
+                    src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" 
+                    alt="akinAI logo" 
+                    className="w-full h-full object-contain"
+                  />
+                </AspectRatio>
               </div>
             </div>
 
