@@ -13,13 +13,11 @@ const HeroSection = () => {
             {/* Just the logo */}
             <div className="mb-6 flex flex-col items-center">
               <div className="w-32 h-32 flex justify-center">
-                <AspectRatio ratio={1/1} className="w-full">
-                  <img 
-                    src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" 
-                    alt="akinAI logo" 
-                    className="w-full h-full object-contain"
-                  />
-                </AspectRatio>
+                <img 
+                  src="/lovable-uploads/25eb766e-0b57-479d-9349-2f3b20e6fdb9.png" 
+                  alt="akinAI logo" 
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
 

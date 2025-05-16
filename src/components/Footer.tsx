@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const Footer = () => {
   return (
