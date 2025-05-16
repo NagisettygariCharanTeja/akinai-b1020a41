@@ -99,7 +99,7 @@
   }
 
   body {
-    @apply bg-[#685B60] text-[#F5F5F5] font-dm-sans;
+    @apply bg-[#5D4766] text-[#F5F5F5] font-dm-sans;
     background-image: var(--gradient-mesh);
     background-attachment: fixed;
   }
