@@ -1,19 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const HeroSection = () => {
-  const [days, setDays] = useState<number>(30);
+  const [days, setDays] = useState<number>(69);
   const [hours, setHours] = useState<number>(0);
   const [minutes, setMinutes] = useState<number>(0);
   const [seconds, setSeconds] = useState<number>(0);
 
   useEffect(() => {
-    // Set launch date to 30 days from now for promotional purposes
+    // Set launch date to 69 days from now for promotional purposes
     const launchDate = new Date();
-    launchDate.setDate(launchDate.getDate() + 30);
+    launchDate.setDate(launchDate.getDate() + 69);
     
     const interval = setInterval(() => {
       const now = new Date();
@@ -87,15 +85,6 @@ const HeroSection = () => {
                   <span className="text-sm mt-2 text-[#F5F5F5]">Seconds</span>
                 </div>
               </div>
-            </div>
-            
-            {/* Call to action button */}
-            <div className="mt-6">
-              <a href="#early-access">
-                <Button className="bg-gradient-to-r from-[#333333] to-[#222222] text-white px-8 py-6 text-lg hover:opacity-90 h-auto">
-                  Get Early Access
-                </Button>
-              </a>
             </div>
           </div>
         </div>
