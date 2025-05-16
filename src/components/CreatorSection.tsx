@@ -4,15 +4,15 @@ import React from 'react';
 const CreatorSection = () => {
   return (
     <section id="creator" className="py-24 relative">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0di00aC0ydjRoLTR2Mmg0djRoMnYtNGg0di0yaC00em0wLTMwVjBoLTJ2NGgtNHYyaDR2NGgyVjZoNFY0aC00ek02IDM0di00SDR2NEgwdjJoNHY0aDJ2LTRoNHYtMkg2ek02IDRWMEg0djRIMHYyaDR2NGgyVjZoNFY0SDZ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-10 -z-10"></div>
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0di00aC0ydjRoLTR2Mmg0djRoMnYtNGg0di0yaC00em0wLTMwVjBoLTJ2NEgtNHYyaDR2NGgyVjZoNFY0aC00ek02IDM0di00SDR2NEgwdjJoNHY0aDJ2LTRoNHYtMkg2ek02IDRWMEg0djRIMHYyaDR2NGgyVjZoNFY0SDZ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-10 -z-10"></div>
       <div className="container">
         <div className="flex flex-col md:flex-row items-center gap-12">
           <div className="md:w-1/3">
             <div className="relative w-64 h-64 mx-auto">
-              <div className="absolute inset-0 bg-gradient-to-br from-akin-purple/20 to-akin-blue/20 rounded-full"></div>
-              <div className="absolute inset-3 bg-black/30 backdrop-blur-sm rounded-full border border-white/10 overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="text-6xl font-bold">CT</div>
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-800/30 to-gray-900/30 rounded-full"></div>
+              <div className="absolute inset-3 bg-black/40 backdrop-blur-sm rounded-full border border-white/10 overflow-hidden">
+                <div className="w-full h-full flex items-center justify-center p-6">
+                  <div className="text-lg font-medium text-center">Charan Teja Nagisettygari</div>
                 </div>
               </div>
             </div>
@@ -29,10 +29,10 @@ const CreatorSection = () => {
               </blockquote>
               <div className="border-t border-white/10 mt-6 pt-4 flex justify-end items-center gap-4">
                 <div>
-                  <p className="font-bold text-right">Charan Teja</p>
+                  <p className="font-bold text-right">Charan Teja Nagisettygari</p>
                   <p className="text-sm text-[#F5F5F5] text-right">Creator of AkinAI</p>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-r from-akin-purple to-akin-blue rounded-full"></div>
+                <div className="w-12 h-12 bg-gradient-to-r from-gray-700 to-gray-900 rounded-full"></div>
               </div>
             </div>
           </div>
