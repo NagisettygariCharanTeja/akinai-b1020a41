@@ -1,24 +1,25 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image } from 'lucide-react';
+import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image, Download, Trash2, Search, Moon, Sun, Plus, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
 const Chat = () => {
   const [minimizedCards, setMinimizedCards] = useState<Record<string, boolean>>({});
-  const [showConnections, setShowConnections] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatCards, setChatCards] = useState([
     {
       id: 'assignment',
       title: 'Assignment Help',
-      icon: <Sparkles className="h-5 w-5 text-yellow-400" />,
+      icon: <Sparkles className="h-5 w-5 text-blue-500" />,
       messages: [{
         content: 'I need help with my English Literature essay on the parallels between modern politics and Orwell\'s 1984.',
         isUser: true
@@ -42,7 +43,7 @@ const Chat = () => {
     {
       id: 'trip',
       title: 'Bangkok Trip',
-      icon: <Star className="h-5 w-5 text-purple-400" />,
+      icon: <Star className="h-5 w-5 text-green-500" />,
       messages: [{
         content: 'I\'m planning a trip to Bangkok next month. What are some must-see places?',
         isUser: true
@@ -69,7 +70,7 @@ const Chat = () => {
     {
       id: 'meal',
       title: 'Meal Ideas',
-      icon: <Zap className="h-5 w-5 text-blue-400" />,
+      icon: <Zap className="h-5 w-5 text-purple-500" />,
       messages: [{
         content: 'I need meal ideas for the week that are healthy and quick to prepare.',
         isUser: true
@@ -95,19 +96,21 @@ const Chat = () => {
     }
   ]);
 
-  useEffect(() => {
-    // Animate neural connections
-    setTimeout(() => setShowConnections(true), 800);
+  const chatTemplates = [
+    { name: 'Study Help', prompt: 'I need help studying for...' },
+    { name: 'Trip Planning', prompt: 'Help me plan a trip to...' },
+    { name: 'Recipe Ideas', prompt: 'I need healthy meal ideas for...' },
+    { name: 'Work Project', prompt: 'I need assistance with my work project about...' }
+  ];
 
-    // Welcome toast
+  useEffect(() => {
     setTimeout(() => {
       toast.success("Welcome to AkinAI Premium", {
         description: "Your AI assistant is ready to help",
-        icon: <Star className="h-4 w-4 text-yellow-400" />
+        icon: <Star className="h-4 w-4 text-blue-500" />
       });
     }, 1000);
 
-    // Set default selected card
     setSelectedCardId('assignment');
   }, []);
 
@@ -140,10 +143,9 @@ const Chat = () => {
 
       toast.info("Message sent", {
         description: "Your message is being processed",
-        icon: <Sparkles className="h-4 w-4 text-blue-400" />
+        icon: <Sparkles className="h-4 w-4 text-blue-500" />
       });
       
-      // Simulate AI response
       setTimeout(() => {
         setChatCards(prev => {
           return prev.map(card => {
@@ -175,7 +177,7 @@ const Chat = () => {
   const handleAddImage = () => {
     toast.info("Add Image", {
       description: "Image upload feature coming soon",
-      icon: <Image className="h-4 w-4 text-green-400" />
+      icon: <Image className="h-4 w-4 text-green-500" />
     });
   };
 
@@ -183,186 +185,320 @@ const Chat = () => {
     setSelectedCardId(cardId);
   };
 
-  // Animation variants
+  const handleExportChat = () => {
+    if (selectedCardId) {
+      const selectedChat = chatCards.find(card => card.id === selectedCardId);
+      if (selectedChat) {
+        const chatData = JSON.stringify(selectedChat, null, 2);
+        const blob = new Blob([chatData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${selectedChat.title}-chat.json`;
+        a.click();
+        toast.success("Chat exported successfully");
+      }
+    }
+  };
+
+  const handleClearChat = () => {
+    if (selectedCardId) {
+      setChatCards(prev => prev.map(card => 
+        card.id === selectedCardId 
+          ? { ...card, messages: [] }
+          : card
+      ));
+      toast.success("Chat cleared");
+    }
+  };
+
+  const handleNewChat = () => {
+    const newChatId = `chat-${Date.now()}`;
+    const newChat = {
+      id: newChatId,
+      title: 'New Chat',
+      icon: <Sparkles className="h-5 w-5 text-blue-500" />,
+      messages: []
+    };
+    setChatCards(prev => [...prev, newChat]);
+    setSelectedCardId(newChatId);
+    toast.success("New chat created");
+  };
+
+  const filteredCards = chatCards.filter(card => 
+    card.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const containerVariants = {
-    hidden: {
-      opacity: 0
-    },
+    hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
+      transition: { staggerChildren: 0.1 }
     }
   };
   
   const itemVariants = {
-    hidden: {
-      y: 20,
-      opacity: 0
-    },
-    show: {
-      y: 0,
-      opacity: 1
-    }
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1 }
   };
 
-  return <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-900 font-dm-sans pt-24 pb-16 px-4 md:px-6 relative overflow-hidden">
-      {/* Neural network background */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute w-full h-full bg-neural-pattern"></div>
-      </div>
+  return (
+    <div className={`min-h-screen transition-colors duration-300 ${
+      isDarkMode 
+        ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
+        : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
+    }`}>
       
-      {/* Animated connections */}
-      {showConnections && <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {Array.from({length: 8}).map((_, i) => <motion.div key={i} className="absolute bg-gradient-to-r from-emerald-400/20 to-cyan-400/20 h-0.5 rounded-full" initial={{
-            width: 0,
-            opacity: 0
-          }} animate={{
-            width: '30%',
-            opacity: 0.5
-          }} transition={{
-            duration: 2,
-            delay: i * 0.3,
-            repeat: Infinity,
-            repeatType: 'reverse',
-            ease: 'easeInOut'
-          }} style={{
-            top: `${20 + i * 8}%`,
-            left: `${i % 2 === 0 ? 5 : 65}%`,
-            transformOrigin: i % 2 === 0 ? 'left' : 'right'
-          }} />)}
-        </div>}
-
-      {/* Floating orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({length: 5}).map((_, i) => <motion.div key={i} className="absolute w-32 h-32 rounded-full bg-gradient-to-r from-emerald-400/10 to-cyan-400/10 blur-xl" animate={{
-          x: [0, 30, 0],
-          y: [0, 50, 0]
-        }} transition={{
-          duration: 10 + i * 2,
-          repeat: Infinity,
-          repeatType: 'mirror',
-          ease: 'easeInOut',
-          delay: i * 2
-        }} style={{
-          top: `${10 + i * 15}%`,
-          left: `${10 + i * 18}%`
-        }} />)}
-      </div>
-      
-      <div className="container mx-auto max-w-7xl relative z-10">
-        {/* Header */}
-        <motion.div className="flex justify-between items-center mb-8" initial={{
-        y: -20,
-        opacity: 0
-      }} animate={{
-        y: 0,
-        opacity: 1
-      }} transition={{
-        duration: 0.5
-      }}>
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 blur-sm opacity-70"></div>
-              <h1 className="relative text-3xl font-bold text-slate-50">akinAI</h1>
-            </div>
-            <span className="bg-white/10 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">PREMIUM</span>
+      {/* Sidebar */}
+      <div className={`fixed left-0 top-0 h-full w-80 transform transition-transform duration-300 z-20 ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } ${isDarkMode ? 'bg-slate-800/95' : 'bg-white/95'} backdrop-blur-md border-r ${
+        isDarkMode ? 'border-slate-700' : 'border-gray-200'
+      }`}>
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Chat Templates
+            </h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarOpen(false)}
+              className={isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+            >
+              ×
+            </Button>
           </div>
-          <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:bg-teal-600 text-white shadow-lg shadow-emerald-600/20 border border-white/10 backdrop-blur-sm" onClick={() => toast.success("Creating new task...")}>
-            <Sparkles className="h-4 w-4 mr-1" />
-            New Task
-          </Button>
+          
+          <div className="space-y-3">
+            {chatTemplates.map((template, idx) => (
+              <Button
+                key={idx}
+                variant="ghost"
+                className={`w-full justify-start ${
+                  isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={() => {
+                  setInputMessage(template.prompt);
+                  setSidebarOpen(false);
+                }}
+              >
+                {template.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 z-10"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <div className="container mx-auto max-w-7xl px-4 py-8">
+        {/* Header */}
+        <motion.div 
+          className="flex justify-between items-center mb-8"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarOpen(true)}
+              className={`${isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            
+            <div className="flex items-center space-x-3">
+              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                akinAI
+              </h1>
+              <span className={`text-xs px-2 py-1 rounded-full ${
+                isDarkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'
+              }`}>
+                PREMIUM
+              </span>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <div className="relative">
+              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
+                isDarkMode ? 'text-gray-400' : 'text-gray-500'
+              }`} />
+              <Input
+                placeholder="Search chats..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`pl-10 w-48 ${
+                  isDarkMode 
+                    ? 'bg-slate-800 border-slate-600 text-white placeholder:text-gray-400' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
+              />
+            </div>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className={isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+            >
+              {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+            
+            <Button
+              onClick={handleNewChat}
+              className={`${
+                isDarkMode 
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              New Chat
+            </Button>
+          </div>
         </motion.div>
 
-        {/* Chat Grid - Equal height cards with selection highlight and increased height */}
-        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[600px]" variants={containerVariants} initial="hidden" animate="show">
-          {chatCards.map((card, idx) => (
+        {/* Chat Actions */}
+        {selectedCardId && (
+          <motion.div 
+            className="flex justify-end space-x-2 mb-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportChat}
+              className={isDarkMode ? 'border-slate-600 text-white hover:bg-slate-700' : 'border-gray-300'}
+            >
+              <Download className="h-4 w-4 mr-1" />
+              Export
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleClearChat}
+              className={isDarkMode ? 'border-slate-600 text-white hover:bg-slate-700' : 'border-gray-300'}
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Clear
+            </Button>
+          </motion.div>
+        )}
+
+        {/* Chat Grid */}
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[600px]"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
+          {filteredCards.map((card, idx) => (
             <motion.div 
               key={card.id} 
               variants={itemVariants} 
-              transition={{
-                duration: 0.4,
-                delay: idx * 0.1 + 0.3
-              }} 
-              whileHover={{
-                y: -5,
-                transition: {
-                  duration: 0.2
-                }
-              }} 
+              whileHover={{ y: -2 }}
               className="flex h-full"
               onClick={() => handleSelectCard(card.id)}
             >
               <Card 
-                className={`bg-white/5 backdrop-blur-md border-white/10 text-white overflow-hidden shadow-xl shadow-black/5 relative flex flex-col w-full cursor-pointer h-full
-                  ${selectedCardId === card.id ? 'ring-2 ring-emerald-400 border-emerald-400' : ''}`}
+                className={`overflow-hidden shadow-sm border cursor-pointer flex flex-col w-full h-full transition-all duration-200 ${
+                  selectedCardId === card.id 
+                    ? (isDarkMode 
+                        ? 'ring-2 ring-blue-500 bg-slate-800 border-blue-500' 
+                        : 'ring-2 ring-blue-500 bg-blue-50 border-blue-500')
+                    : (isDarkMode 
+                        ? 'bg-slate-800/50 border-slate-700 hover:bg-slate-800' 
+                        : 'bg-white border-gray-200 hover:bg-gray-50')
+                }`}
               >
-                <div className={`absolute inset-0 bg-gradient-to-b ${selectedCardId === card.id ? 'from-emerald-400/15 to-cyan-400/15' : 'from-emerald-400/5 to-cyan-400/5'} rounded-lg opacity-30`}></div>
-                <CardHeader className="flex flex-row items-center justify-between p-4 bg-black/20 border-b border-white/5">
+                <CardHeader className={`flex flex-row items-center justify-between p-4 border-b ${
+                  isDarkMode ? 'border-slate-700' : 'border-gray-200'
+                }`}>
                   <div className="flex items-center">
                     <span className="mr-2">{card.icon}</span>
-                    <CardTitle className="text-lg font-medium text-white">{card.title}</CardTitle>
+                    <CardTitle className={`text-lg font-medium ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {card.title}
+                    </CardTitle>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={(e) => {
-                    e.stopPropagation();
-                    toggleCardState(card.id);
-                  }} className="text-white hover:bg-white/10">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleCardState(card.id);
+                    }} 
+                    className={isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+                  >
                     {minimizedCards[card.id] ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
                   </Button>
                 </CardHeader>
                 
                 {!minimizedCards[card.id] && (
-                  <div className="flex flex-col flex-1">
-                    <CardContent className="p-4 flex-1 h-full">
-                      <ScrollArea className="h-[500px] w-full">
-                        <div className="space-y-3 pr-4">
-                          {card.messages.map((message, idx) => (
-                            <motion.div 
-                              key={idx} 
-                              className={`${message.isUser ? 'text-right' : 'text-left'}`} 
-                              initial={{
-                                opacity: 0,
-                                y: 10
-                              }} 
-                              animate={{
-                                opacity: 1,
-                                y: 0
-                              }} 
-                              transition={{
-                                delay: idx * 0.1
-                              }}
-                            >
-                              <div className={`inline-block p-3 rounded-lg max-w-[85%] ${message.isUser ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white ml-auto' : 'bg-white/10 text-white border border-white/5'}`}>
-                                {message.content}
-                              </div>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    </CardContent>
-                  </div>
+                  <CardContent className="p-4 flex-1">
+                    <ScrollArea className="h-[500px] w-full">
+                      <div className="space-y-3 pr-4">
+                        {card.messages.map((message, idx) => (
+                          <motion.div 
+                            key={idx} 
+                            className={`${message.isUser ? 'text-right' : 'text-left'}`}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                          >
+                            <div className={`inline-block p-3 rounded-lg max-w-[85%] ${
+                              message.isUser 
+                                ? 'bg-blue-600 text-white ml-auto' 
+                                : (isDarkMode 
+                                    ? 'bg-slate-700 text-white border border-slate-600' 
+                                    : 'bg-gray-100 text-gray-900 border border-gray-200')
+                            }`}>
+                              {message.content}
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </CardContent>
                 )}
               </Card>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Single Global Input Field */}
-        <motion.div className="mt-8" initial={{
-          opacity: 0,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          delay: 0.6
-        }}>
-          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 shadow-lg">
+        {/* Input Field */}
+        <motion.div 
+          className="mt-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <div className={`border rounded-xl p-4 shadow-sm ${
+            isDarkMode 
+              ? 'bg-slate-800/50 border-slate-700' 
+              : 'bg-white border-gray-200'
+          }`}>
             <div className="flex items-center space-x-2">
               <Input 
-                className={`flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-400/50 h-12 ${!selectedCardId ? 'opacity-70' : ''}`}
-                placeholder={selectedCardId ? `Type in "${chatCards.find(card => card.id === selectedCardId)?.title}" chat...` : "Select a chat first..."}
+                className={`flex-1 border-0 bg-transparent focus:ring-0 h-12 ${
+                  isDarkMode ? 'text-white placeholder:text-gray-400' : 'text-gray-900'
+                } ${!selectedCardId ? 'opacity-70' : ''}`}
+                placeholder={selectedCardId 
+                  ? `Type in "${chatCards.find(card => card.id === selectedCardId)?.title}" chat...` 
+                  : "Select a chat first..."
+                }
                 value={inputMessage}
                 onChange={e => setInputMessage(e.target.value)}
                 onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
@@ -371,17 +507,21 @@ const Chat = () => {
               <Button 
                 size="lg" 
                 variant="outline"
-                className={`bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm h-12 ${!selectedCardId ? 'opacity-70' : ''}`} 
                 onClick={handleAddImage}
                 disabled={!selectedCardId}
+                className={`h-12 ${
+                  isDarkMode ? 'border-slate-600 text-white hover:bg-slate-700' : 'border-gray-300'
+                } ${!selectedCardId ? 'opacity-70' : ''}`}
               >
                 <Image className="h-5 w-5" />
               </Button>
               <Button 
                 size="lg" 
-                className={`bg-gradient-to-r from-emerald-600 to-teal-600 hover:bg-teal-600 text-white shadow-lg shadow-emerald-600/20 h-12 ${!selectedCardId ? 'opacity-70' : ''}`} 
                 onClick={handleSendMessage}
                 disabled={!selectedCardId}
+                className={`bg-blue-600 hover:bg-blue-700 text-white h-12 ${
+                  !selectedCardId ? 'opacity-70' : ''
+                }`}
               >
                 <Send className="h-5 w-5 mr-2" />
                 Send
@@ -391,68 +531,67 @@ const Chat = () => {
         </motion.div>
 
         {/* Tags Section */}
-        <motion.div className="mt-8 flex flex-wrap gap-2" initial={{
-        opacity: 0,
-        y: 20
-      }} animate={{
-        opacity: 1,
-        y: 0
-      }} transition={{
-        delay: 0.8
-      }}>
-          <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm">
-            <span className="w-2 h-2 rounded-full bg-yellow-400 mr-2"></span>
-            #assignment
-          </Button>
-          <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm">
-            <span className="w-2 h-2 rounded-full bg-purple-400 mr-2"></span>
-            #travel
-          </Button>
-          <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm">
-            <span className="w-2 h-2 rounded-full bg-blue-400 mr-2"></span>
-            #food
-          </Button>
-          <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm">
-            <span className="w-2 h-2 rounded-full bg-green-400 mr-2"></span>
-            #ideas
-          </Button>
+        <motion.div 
+          className="mt-8 flex flex-wrap gap-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          {['#assignment', '#travel', '#food', '#ideas'].map((tag, idx) => (
+            <Button 
+              key={tag}
+              variant="outline" 
+              className={`${
+                isDarkMode 
+                  ? 'bg-slate-800/50 text-white border-slate-600 hover:bg-slate-700' 
+                  : 'bg-gray-50 text-gray-700 border-gray-300 hover:bg-gray-100'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full mr-2 ${
+                idx === 0 ? 'bg-blue-500' : 
+                idx === 1 ? 'bg-green-500' : 
+                idx === 2 ? 'bg-purple-500' : 'bg-yellow-500'
+              }`}></span>
+              {tag}
+            </Button>
+          ))}
         </motion.div>
         
         {/* Stats cards */}
-        <motion.div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4" initial={{
-        opacity: 0
-      }} animate={{
-        opacity: 1
-      }} transition={{
-        delay: 1
-      }}>
-          {['Tasks Completed', 'Premium Credits', 'Response Time', 'Satisfaction'].map((stat, i) => <motion.div key={stat} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 text-center" whileHover={{
-          scale: 1.03,
-          boxShadow: "0 10px 30px -10px rgba(16, 185, 129, 0.3)",
-          transition: {
-            duration: 0.2
-          }
-        }} initial={{
-          y: 20,
-          opacity: 0
-        }} animate={{
-          y: 0,
-          opacity: 1
-        }} transition={{
-          delay: 1 + i * 0.1
-        }}>
-              <div className="text-sm text-white/70">{stat}</div>
-              <div className="text-2xl font-bold text-white mt-1">
+        <motion.div 
+          className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          {['Tasks Completed', 'Premium Credits', 'Response Time', 'Satisfaction'].map((stat, i) => (
+            <motion.div 
+              key={stat} 
+              className={`rounded-xl p-4 text-center border ${
+                isDarkMode 
+                  ? 'bg-slate-800/50 border-slate-700' 
+                  : 'bg-white border-gray-200'
+              }`}
+              whileHover={{ scale: 1.02 }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1 + i * 0.1 }}
+            >
+              <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                {stat}
+              </div>
+              <div className={`text-2xl font-bold mt-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 {i === 0 ? '27' : i === 1 ? '850' : i === 2 ? '1.2s' : '98%'}
               </div>
-              <div className="text-xs text-white/50 mt-1">
+              <div className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                 {i === 0 ? '+5 this week' : i === 1 ? '150 remaining' : i === 2 ? 'Avg. response' : 'User rating'}
               </div>
-            </motion.div>)}
+            </motion.div>
+          ))}
         </motion.div>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default Chat;
-
