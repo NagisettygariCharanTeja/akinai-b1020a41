@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
@@ -266,8 +265,8 @@ const Chat = () => {
           </Button>
         </motion.div>
 
-        {/* Chat Grid - Equal height cards with selection highlight */}
-        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" variants={containerVariants} initial="hidden" animate="show">
+        {/* Chat Grid - Equal height cards with selection highlight and increased height */}
+        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[400px]" variants={containerVariants} initial="hidden" animate="show">
           {chatCards.map((card, idx) => (
             <motion.div 
               key={card.id} 
@@ -282,11 +281,11 @@ const Chat = () => {
                   duration: 0.2
                 }
               }} 
-              className="flex"
+              className="flex h-full"
               onClick={() => handleSelectCard(card.id)}
             >
               <Card 
-                className={`bg-white/5 backdrop-blur-md border-white/10 text-white overflow-hidden shadow-xl shadow-black/5 relative flex flex-col w-full cursor-pointer
+                className={`bg-white/5 backdrop-blur-md border-white/10 text-white overflow-hidden shadow-xl shadow-black/5 relative flex flex-col w-full cursor-pointer h-full
                   ${selectedCardId === card.id ? 'ring-2 ring-akin-purple border-akin-purple' : ''}`}
               >
                 <div className={`absolute inset-0 bg-gradient-to-b ${selectedCardId === card.id ? 'from-akin-purple/15 to-akin-blue/15' : 'from-akin-purple/5 to-akin-blue/5'} rounded-lg opacity-30`}></div>
