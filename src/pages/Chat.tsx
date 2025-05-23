@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
@@ -266,7 +267,7 @@ const Chat = () => {
         </motion.div>
 
         {/* Chat Grid - Equal height cards with selection highlight and increased height */}
-        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[400px]" variants={containerVariants} initial="hidden" animate="show">
+        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[600px]" variants={containerVariants} initial="hidden" animate="show">
           {chatCards.map((card, idx) => (
             <motion.div 
               key={card.id} 
@@ -304,7 +305,7 @@ const Chat = () => {
                 
                 {!minimizedCards[card.id] && (
                   <div className="flex flex-col flex-1">
-                    <CardContent className="p-4 space-y-3 flex-1 overflow-y-auto max-h-[300px]">
+                    <CardContent className="p-4 space-y-3 flex-1 overflow-y-auto max-h-[500px]">
                       {card.messages.map((message, idx) => (
                         <motion.div 
                           key={idx} 
