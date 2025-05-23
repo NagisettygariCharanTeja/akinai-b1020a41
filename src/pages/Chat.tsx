@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -264,7 +263,7 @@ const Chat = () => {
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(false)}
-              className={isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+              className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
             >
               ×
             </Button>
@@ -276,7 +275,7 @@ const Chat = () => {
                 key={idx}
                 variant="ghost"
                 className={`w-full justify-start ${
-                  isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'
+                  isDarkMode ? 'text-slate-300 hover:text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'
                 }`}
                 onClick={() => {
                   setInputMessage(template.prompt);
@@ -311,7 +310,7 @@ const Chat = () => {
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(true)}
-              className={`${isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+              className={`${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
             >
               <Menu className="h-5 w-5" />
             </Button>
@@ -349,7 +348,7 @@ const Chat = () => {
               variant="ghost"
               size="sm"
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className={isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+              className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
             >
               {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
@@ -379,7 +378,7 @@ const Chat = () => {
               variant="outline"
               size="sm"
               onClick={handleExportChat}
-              className={isDarkMode ? 'border-slate-600 text-white hover:bg-slate-700' : 'border-gray-300'}
+              className={isDarkMode ? 'border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700' : 'border-gray-300'}
             >
               <Download className="h-4 w-4 mr-1" />
               Export
@@ -388,7 +387,7 @@ const Chat = () => {
               variant="outline"
               size="sm"
               onClick={handleClearChat}
-              className={isDarkMode ? 'border-slate-600 text-white hover:bg-slate-700' : 'border-gray-300'}
+              className={isDarkMode ? 'border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700' : 'border-gray-300'}
             >
               <Trash2 className="h-4 w-4 mr-1" />
               Clear
@@ -440,7 +439,7 @@ const Chat = () => {
                       e.stopPropagation();
                       toggleCardState(card.id);
                     }} 
-                    className={isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+                    className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
                   >
                     {minimizedCards[card.id] ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
                   </Button>
@@ -510,7 +509,7 @@ const Chat = () => {
                 onClick={handleAddImage}
                 disabled={!selectedCardId}
                 className={`h-12 ${
-                  isDarkMode ? 'border-slate-600 text-white hover:bg-slate-700' : 'border-gray-300'
+                  isDarkMode ? 'border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700' : 'border-gray-300'
                 } ${!selectedCardId ? 'opacity-70' : ''}`}
               >
                 <Image className="h-5 w-5" />
@@ -543,7 +542,7 @@ const Chat = () => {
               variant="outline" 
               className={`${
                 isDarkMode 
-                  ? 'bg-slate-800/50 text-white border-slate-600 hover:bg-slate-700' 
+                  ? 'bg-slate-800/50 text-slate-300 border-slate-600 hover:text-white hover:bg-slate-700' 
                   : 'bg-gray-50 text-gray-700 border-gray-300 hover:bg-gray-100'
               }`}
             >
