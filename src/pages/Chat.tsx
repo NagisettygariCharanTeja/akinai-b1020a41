@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
@@ -10,6 +9,7 @@ import { toast } from 'sonner';
 const Chat = () => {
   const [minimizedCards, setMinimizedCards] = useState<Record<string, boolean>>({});
   const [showConnections, setShowConnections] = useState(false);
+  const [inputMessage, setInputMessage] = useState('');
 
   useEffect(() => {
     // Animate neural connections
@@ -29,6 +29,16 @@ const Chat = () => {
       ...prev,
       [cardId]: !prev[cardId]
     }));
+  };
+
+  const handleSendMessage = () => {
+    if (inputMessage.trim()) {
+      toast.info("Message sent", {
+        description: "Your message is being processed",
+        icon: <Sparkles className="h-4 w-4 text-blue-400" />
+      });
+      setInputMessage('');
+    }
   };
 
   const chatCards = [
@@ -173,7 +183,7 @@ const Chat = () => {
           </Button>
         </motion.div>
 
-        {/* Chat Grid */}
+        {/* Chat Grid - Updated to make cards equal height */}
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           variants={containerVariants}
@@ -186,8 +196,9 @@ const Chat = () => {
               variants={itemVariants}
               transition={{ duration: 0.4, delay: idx * 0.1 + 0.3 }}
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="flex"
             >
-              <Card className="bg-white/5 backdrop-blur-md border-white/10 text-white overflow-hidden shadow-xl shadow-black/5 relative">
+              <Card className="bg-white/5 backdrop-blur-md border-white/10 text-white overflow-hidden shadow-xl shadow-black/5 relative flex flex-col w-full">
                 <div className="absolute inset-0 bg-gradient-to-b from-akin-purple/5 to-akin-blue/5 rounded-lg opacity-30"></div>
                 <CardHeader className="flex flex-row items-center justify-between p-4 bg-black/20 border-b border-white/5">
                   <div className="flex items-center">
@@ -205,8 +216,8 @@ const Chat = () => {
                 </CardHeader>
                 
                 {!minimizedCards[card.id] && (
-                  <>
-                    <CardContent className="p-4 space-y-3">
+                  <div className="flex flex-col flex-1">
+                    <CardContent className="p-4 space-y-3 flex-1">
                       {card.messages.map((message, idx) => (
                         <motion.div 
                           key={idx} 
@@ -227,22 +238,39 @@ const Chat = () => {
                         </motion.div>
                       ))}
                     </CardContent>
-                    <CardFooter className="p-4 border-t border-white/10">
-                      <div className="flex w-full items-center space-x-2">
-                        <Input 
-                          className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:ring-2 focus:ring-akin-purple/50"
-                          placeholder="Type a message..."
-                        />
-                        <Button size="icon" className="bg-gradient-to-r from-akin-purple to-akin-electric-purple hover:bg-akin-electric-purple text-white shadow-lg shadow-akin-purple/20">
-                          <Send className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardFooter>
-                  </>
+                  </div>
                 )}
               </Card>
             </motion.div>
           ))}
+        </motion.div>
+
+        {/* Single Global Input Field */}
+        <motion.div 
+          className="mt-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 shadow-lg">
+            <div className="flex items-center space-x-2">
+              <Input 
+                className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:ring-2 focus:ring-akin-purple/50 h-12"
+                placeholder="Ask me anything..."
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              />
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-akin-purple to-akin-electric-purple hover:bg-akin-electric-purple text-white shadow-lg shadow-akin-purple/20 h-12"
+                onClick={handleSendMessage}
+              >
+                <Send className="h-5 w-5 mr-2" />
+                Send
+              </Button>
+            </div>
+          </div>
         </motion.div>
 
         {/* Tags Section */}
