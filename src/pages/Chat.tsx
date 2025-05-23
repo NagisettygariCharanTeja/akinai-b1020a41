@@ -1,9 +1,11 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Minimize2, Maximize2, Send, Sparkles, Star, Zap } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -170,6 +172,13 @@ const Chat = () => {
     }
   };
 
+  const handleAddImage = () => {
+    toast.info("Add Image", {
+      description: "Image upload feature coming soon",
+      icon: <Image className="h-4 w-4 text-green-400" />
+    });
+  };
+
   const handleSelectCard = (cardId: string) => {
     setSelectedCardId(cardId);
   };
@@ -198,7 +207,7 @@ const Chat = () => {
     }
   };
 
-  return <div className="min-h-screen bg-gradient-to-br from-[#0e1117] to-[#232734] font-dm-sans pt-24 pb-16 px-4 md:px-6 relative overflow-hidden">
+  return <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-900 font-dm-sans pt-24 pb-16 px-4 md:px-6 relative overflow-hidden">
       {/* Neural network background */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute w-full h-full bg-neural-pattern"></div>
@@ -206,7 +215,7 @@ const Chat = () => {
       
       {/* Animated connections */}
       {showConnections && <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {Array.from({length: 8}).map((_, i) => <motion.div key={i} className="absolute bg-gradient-to-r from-akin-purple/20 to-akin-blue/20 h-0.5 rounded-full" initial={{
+          {Array.from({length: 8}).map((_, i) => <motion.div key={i} className="absolute bg-gradient-to-r from-emerald-400/20 to-cyan-400/20 h-0.5 rounded-full" initial={{
             width: 0,
             opacity: 0
           }} animate={{
@@ -227,7 +236,7 @@ const Chat = () => {
 
       {/* Floating orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({length: 5}).map((_, i) => <motion.div key={i} className="absolute w-32 h-32 rounded-full bg-gradient-to-r from-akin-purple/10 to-akin-blue/10 blur-xl" animate={{
+        {Array.from({length: 5}).map((_, i) => <motion.div key={i} className="absolute w-32 h-32 rounded-full bg-gradient-to-r from-emerald-400/10 to-cyan-400/10 blur-xl" animate={{
           x: [0, 30, 0],
           y: [0, 50, 0]
         }} transition={{
@@ -255,12 +264,12 @@ const Chat = () => {
       }}>
           <div className="flex items-center space-x-3">
             <div className="relative">
-              <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-akin-purple via-akin-electric-purple to-akin-blue blur-sm opacity-70"></div>
+              <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 blur-sm opacity-70"></div>
               <h1 className="relative text-3xl font-bold text-slate-50">akinAI</h1>
             </div>
             <span className="bg-white/10 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">PREMIUM</span>
           </div>
-          <Button className="bg-gradient-to-r from-akin-purple to-akin-electric-purple hover:bg-akin-electric-purple text-white shadow-lg shadow-akin-purple/20 border border-white/10 backdrop-blur-sm" onClick={() => toast.success("Creating new task...")}>
+          <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:bg-teal-600 text-white shadow-lg shadow-emerald-600/20 border border-white/10 backdrop-blur-sm" onClick={() => toast.success("Creating new task...")}>
             <Sparkles className="h-4 w-4 mr-1" />
             New Task
           </Button>
@@ -287,9 +296,9 @@ const Chat = () => {
             >
               <Card 
                 className={`bg-white/5 backdrop-blur-md border-white/10 text-white overflow-hidden shadow-xl shadow-black/5 relative flex flex-col w-full cursor-pointer h-full
-                  ${selectedCardId === card.id ? 'ring-2 ring-akin-purple border-akin-purple' : ''}`}
+                  ${selectedCardId === card.id ? 'ring-2 ring-emerald-400 border-emerald-400' : ''}`}
               >
-                <div className={`absolute inset-0 bg-gradient-to-b ${selectedCardId === card.id ? 'from-akin-purple/15 to-akin-blue/15' : 'from-akin-purple/5 to-akin-blue/5'} rounded-lg opacity-30`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-b ${selectedCardId === card.id ? 'from-emerald-400/15 to-cyan-400/15' : 'from-emerald-400/5 to-cyan-400/5'} rounded-lg opacity-30`}></div>
                 <CardHeader className="flex flex-row items-center justify-between p-4 bg-black/20 border-b border-white/5">
                   <div className="flex items-center">
                     <span className="mr-2">{card.icon}</span>
@@ -305,28 +314,32 @@ const Chat = () => {
                 
                 {!minimizedCards[card.id] && (
                   <div className="flex flex-col flex-1">
-                    <CardContent className="p-4 space-y-3 flex-1 overflow-y-auto max-h-[500px]">
-                      {card.messages.map((message, idx) => (
-                        <motion.div 
-                          key={idx} 
-                          className={`${message.isUser ? 'text-right' : 'text-left'}`} 
-                          initial={{
-                            opacity: 0,
-                            y: 10
-                          }} 
-                          animate={{
-                            opacity: 1,
-                            y: 0
-                          }} 
-                          transition={{
-                            delay: idx * 0.1
-                          }}
-                        >
-                          <div className={`inline-block p-3 rounded-lg max-w-[85%] ${message.isUser ? 'bg-gradient-to-r from-akin-purple to-akin-electric-purple text-white ml-auto' : 'bg-white/10 text-white border border-white/5'}`}>
-                            {message.content}
-                          </div>
-                        </motion.div>
-                      ))}
+                    <CardContent className="p-4 flex-1 h-full">
+                      <ScrollArea className="h-[500px] w-full">
+                        <div className="space-y-3 pr-4">
+                          {card.messages.map((message, idx) => (
+                            <motion.div 
+                              key={idx} 
+                              className={`${message.isUser ? 'text-right' : 'text-left'}`} 
+                              initial={{
+                                opacity: 0,
+                                y: 10
+                              }} 
+                              animate={{
+                                opacity: 1,
+                                y: 0
+                              }} 
+                              transition={{
+                                delay: idx * 0.1
+                              }}
+                            >
+                              <div className={`inline-block p-3 rounded-lg max-w-[85%] ${message.isUser ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white ml-auto' : 'bg-white/10 text-white border border-white/5'}`}>
+                                {message.content}
+                              </div>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </ScrollArea>
                     </CardContent>
                   </div>
                 )}
@@ -348,7 +361,7 @@ const Chat = () => {
           <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 shadow-lg">
             <div className="flex items-center space-x-2">
               <Input 
-                className={`flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:ring-2 focus:ring-akin-purple/50 h-12 ${!selectedCardId ? 'opacity-70' : ''}`}
+                className={`flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-400/50 h-12 ${!selectedCardId ? 'opacity-70' : ''}`}
                 placeholder={selectedCardId ? `Type in "${chatCards.find(card => card.id === selectedCardId)?.title}" chat...` : "Select a chat first..."}
                 value={inputMessage}
                 onChange={e => setInputMessage(e.target.value)}
@@ -357,7 +370,16 @@ const Chat = () => {
               />
               <Button 
                 size="lg" 
-                className={`bg-gradient-to-r from-akin-purple to-akin-electric-purple hover:bg-akin-electric-purple text-white shadow-lg shadow-akin-purple/20 h-12 ${!selectedCardId ? 'opacity-70' : ''}`} 
+                variant="outline"
+                className={`bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm h-12 ${!selectedCardId ? 'opacity-70' : ''}`} 
+                onClick={handleAddImage}
+                disabled={!selectedCardId}
+              >
+                <Image className="h-5 w-5" />
+              </Button>
+              <Button 
+                size="lg" 
+                className={`bg-gradient-to-r from-emerald-600 to-teal-600 hover:bg-teal-600 text-white shadow-lg shadow-emerald-600/20 h-12 ${!selectedCardId ? 'opacity-70' : ''}`} 
                 onClick={handleSendMessage}
                 disabled={!selectedCardId}
               >
@@ -406,7 +428,7 @@ const Chat = () => {
       }}>
           {['Tasks Completed', 'Premium Credits', 'Response Time', 'Satisfaction'].map((stat, i) => <motion.div key={stat} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 text-center" whileHover={{
           scale: 1.03,
-          boxShadow: "0 10px 30px -10px rgba(58, 12, 163, 0.3)",
+          boxShadow: "0 10px 30px -10px rgba(16, 185, 129, 0.3)",
           transition: {
             duration: 0.2
           }
@@ -433,3 +455,4 @@ const Chat = () => {
 };
 
 export default Chat;
+
