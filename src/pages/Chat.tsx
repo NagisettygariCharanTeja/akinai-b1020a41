@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
@@ -102,7 +103,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#685B60] to-[#322e30] font-dm-sans pt-24 pb-16 px-4 md:px-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#0e1117] to-[#232734] font-dm-sans pt-24 pb-16 px-4 md:px-6 relative overflow-hidden">
       {/* Neural network background */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute w-full h-full bg-neural-pattern"></div>
