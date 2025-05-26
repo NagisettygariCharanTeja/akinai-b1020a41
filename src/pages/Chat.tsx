@@ -356,32 +356,49 @@ const Chat = () => {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
+      transition: { 
+        staggerChildren: 0.05,
+        delayChildren: 0.1 
+      }
     }
   };
   
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1 }
+    hidden: { y: 15, opacity: 0 },
+    show: { 
+      y: 0, 
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 25
+      }
+    }
   };
 
-  const minimizedCardVariants = {
-    hidden: { opacity: 0, height: 0, marginBottom: 0 },
+  const minimizedTabVariants = {
+    hidden: { 
+      opacity: 0, 
+      scale: 0.8,
+      y: 10
+    },
     visible: { 
       opacity: 1, 
-      height: "auto", 
-      marginBottom: 12,
+      scale: 1,
+      y: 0,
       transition: { 
-        duration: 0.4,
-        ease: "easeInOut"
+        type: "spring",
+        stiffness: 400,
+        damping: 25,
+        mass: 0.8
       }
     },
     exit: { 
       opacity: 0, 
-      height: 0, 
-      marginBottom: 0,
+      scale: 0.8,
+      y: -10,
       transition: { 
-        duration: 0.3,
+        duration: 0.2,
         ease: "easeInOut"
       }
     }
@@ -449,7 +466,7 @@ const Chat = () => {
           className="flex justify-between items-center mb-8"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
           <div className="flex items-center space-x-4">
             <Button
@@ -519,12 +536,13 @@ const Chat = () => {
             className="flex justify-end space-x-2 mb-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
           >
             <Button
               variant="outline"
               size="sm"
               onClick={handleExportChat}
-              className={isDarkMode ? 'border-slate-600 text-blue-400 hover:text-blue-300 hover:bg-slate-700' : 'border-gray-300 text-blue-600 hover:text-blue-700'}
+              className={isDarkMode ? 'border-slate-600 text-blue-400 hover:text-blue-300 hover:bg-slate-700/50' : 'border-gray-300 text-blue-600 hover:text-blue-700 hover:bg-blue-50'}
             >
               <Download className="h-4 w-4 mr-1" />
               Export
@@ -533,7 +551,7 @@ const Chat = () => {
               variant="outline"
               size="sm"
               onClick={handleClearChat}
-              className={isDarkMode ? 'border-slate-600 text-red-400 hover:text-red-300 hover:bg-slate-700' : 'border-gray-300 text-red-600 hover:text-red-700'}
+              className={isDarkMode ? 'border-slate-600 text-red-400 hover:text-red-300 hover:bg-slate-700/50' : 'border-gray-300 text-red-600 hover:text-red-700 hover:bg-red-50'}
             >
               <Trash2 className="h-4 w-4 mr-1" />
               Clear
@@ -545,7 +563,7 @@ const Chat = () => {
         <AnimatePresence mode="wait">
           {maximizedCards.length > 0 && (
             <motion.div 
-              className={`grid gap-6 min-h-[600px] transition-all duration-500 ease-in-out ${
+              className={`grid gap-6 min-h-[600px] transition-all duration-400 ease-out ${
                 hasOnlyOneMaximized 
                   ? 'grid-cols-1' 
                   : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
@@ -554,6 +572,7 @@ const Chat = () => {
               initial="hidden"
               animate="show"
               layout
+              transition={{ duration: 0.4, ease: "easeOut" }}
             >
               {maximizedCards.map((card, idx) => {
                 const pinnedMessages = card.messages.filter((message, index) => isMessagePinned(message)).map((message, originalIndex) => {
@@ -565,21 +584,21 @@ const Chat = () => {
                   <motion.div 
                     key={card.id} 
                     variants={itemVariants} 
-                    whileHover={{ y: -2 }}
+                    whileHover={{ y: -3, transition: { duration: 0.2, ease: "easeOut" } }}
                     className="flex h-full"
                     onClick={() => handleSelectCard(card.id)}
                     layout
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   >
                     <Card 
-                      className={`overflow-hidden shadow-sm border cursor-pointer flex flex-col w-full h-full transition-all duration-300 ${
+                      className={`overflow-hidden shadow-sm border cursor-pointer flex flex-col w-full h-full transition-all duration-300 ease-out ${
                         selectedCardId === card.id 
                           ? (isDarkMode 
-                              ? 'ring-2 ring-blue-500 bg-slate-800 border-blue-500' 
-                              : 'ring-2 ring-blue-500 bg-blue-50 border-blue-500')
+                              ? 'ring-2 ring-blue-500/80 bg-slate-800 border-blue-500/50 shadow-lg' 
+                              : 'ring-2 ring-blue-500/80 bg-blue-50 border-blue-500/50 shadow-lg')
                           : (isDarkMode 
-                              ? 'bg-slate-800/50 border-slate-700 hover:bg-slate-800' 
-                              : 'bg-white border-gray-200 hover:bg-gray-50')
+                              ? 'bg-slate-800/50 border-slate-700 hover:bg-slate-800 hover:shadow-md' 
+                              : 'bg-white border-gray-200 hover:bg-gray-50 hover:shadow-md')
                       }`}
                     >
                       <CardHeader className={`flex flex-row items-center justify-between p-4 border-b ${
@@ -620,7 +639,7 @@ const Chat = () => {
                             e.stopPropagation();
                             toggleCardState(card.id);
                           }} 
-                          className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+                          className={`transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
                         >
                           <Minimize2 className="h-4 w-4" />
                         </Button>
@@ -642,7 +661,7 @@ const Chat = () => {
                               {pinnedMessages.map(({ message, index }) => (
                                 <div 
                                   key={index}
-                                  className={`p-2 rounded cursor-pointer transition-colors ${
+                                  className={`p-2 rounded cursor-pointer transition-colors duration-200 ${
                                     isDarkMode ? 'bg-slate-800/50 hover:bg-slate-700/50 text-slate-200' : 'bg-white hover:bg-gray-50 text-gray-800'
                                   }`}
                                   onClick={(e) => {
@@ -665,9 +684,13 @@ const Chat = () => {
                               <motion.div 
                                 key={idx} 
                                 className={`${message.isUser ? 'text-right' : 'text-left'} group relative`}
-                                initial={{ opacity: 0, y: 10 }}
+                                initial={{ opacity: 0, y: 8 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: idx * 0.1 }}
+                                transition={{ 
+                                  delay: idx * 0.05,
+                                  duration: 0.3,
+                                  ease: "easeOut"
+                                }}
                                 ref={el => {
                                   if (!messageRefs.current[card.id]) {
                                     messageRefs.current[card.id] = {};
@@ -675,13 +698,13 @@ const Chat = () => {
                                   messageRefs.current[card.id][idx] = el;
                                 }}
                               >
-                                <div className={`inline-block p-3 rounded-lg max-w-[85%] relative transition-colors ${
+                                <div className={`inline-block p-3 rounded-lg max-w-[85%] relative transition-all duration-200 ease-out ${
                                   message.isUser 
                                     ? 'bg-blue-600 text-white ml-auto' 
                                     : (isDarkMode 
                                         ? 'bg-slate-700 text-white border border-slate-600' 
                                         : 'bg-gray-100 text-gray-900 border border-gray-200')
-                                } ${isMessagePinned(message) ? 'ring-2 ring-yellow-500' : ''}`}>
+                                } ${isMessagePinned(message) ? 'ring-2 ring-yellow-500/60' : ''}`}>
                                   {isMessagePinned(message) && (
                                     <Pin className="absolute -top-2 -right-2 h-4 w-4 text-yellow-500 bg-slate-800 rounded-full p-0.5" />
                                   )}
@@ -693,7 +716,7 @@ const Chat = () => {
                                       <Button
                                         variant="ghost"
                                         size="sm"
-                                        className={`opacity-0 group-hover:opacity-100 transition-opacity ml-2 ${
+                                        className={`opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2 ${
                                           isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'
                                         }`}
                                         onClick={(e) => e.stopPropagation()}
@@ -735,82 +758,85 @@ const Chat = () => {
           )}
         </AnimatePresence>
 
-        {/* Minimized Cards Section */}
+        {/* Minimized Cards Section - Chrome Tab Style */}
         <AnimatePresence>
           {minimizedCardsList.length > 0 && (
             <motion.div 
-              className="mt-8 space-y-3"
+              className="mt-8 mb-6"
               initial="hidden"
               animate="visible"
               exit="exit"
             >
-              {minimizedCardsList.map((card) => (
-                <motion.div
-                  key={`minimized-${card.id}`}
-                  variants={minimizedCardVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  layout
-                >
-                  <Card 
-                    className={`overflow-hidden shadow-sm border cursor-pointer transition-all duration-300 hover:shadow-md ${
-                      selectedCardId === card.id 
-                        ? (isDarkMode 
-                            ? 'ring-2 ring-blue-500 bg-slate-800 border-blue-500' 
-                            : 'ring-2 ring-blue-500 bg-blue-50 border-blue-500')
-                        : (isDarkMode 
-                            ? 'bg-slate-800/50 border-slate-700 hover:bg-slate-800' 
-                            : 'bg-white border-gray-200 hover:bg-gray-50')
-                    }`}
-                    onClick={() => handleSelectCard(card.id)}
+              <div className="flex flex-wrap gap-2">
+                {minimizedCardsList.map((card) => (
+                  <motion.div
+                    key={`minimized-${card.id}`}
+                    variants={minimizedTabVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    layout
+                    className="inline-block"
                   >
-                    <CardHeader className={`flex flex-row items-center justify-between p-4 ${
-                      isDarkMode ? 'border-slate-700' : 'border-gray-200'
-                    }`}>
-                      <div className="flex items-center flex-1">
-                        <span className="mr-2">{card.icon}</span>
-                        {editingCardId === card.id ? (
-                          <Input
-                            value={editingTitle}
-                            onChange={(e) => setEditingTitle(e.target.value)}
-                            onKeyDown={handleKeyPress}
-                            onBlur={handleSaveTitle}
-                            className={`text-lg font-medium bg-transparent border-none p-0 h-auto focus:ring-0 ${
-                              isDarkMode ? 'text-white' : 'text-gray-900'
-                            }`}
-                            autoFocus
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                        ) : (
-                          <CardTitle 
-                            className={`text-lg font-medium cursor-pointer ${
-                              isDarkMode ? 'text-white' : 'text-gray-900'
-                            }`}
-                            onDoubleClick={(e) => {
-                              e.stopPropagation();
-                              handleDoubleClickTitle(card.id, card.title);
-                            }}
-                          >
-                            {card.title}
-                          </CardTitle>
-                        )}
-                      </div>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleCardState(card.id);
-                        }} 
-                        className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
-                      >
-                        <Maximize2 className="h-4 w-4" />
-                      </Button>
-                    </CardHeader>
-                  </Card>
-                </motion.div>
-              ))}
+                    <Card 
+                      className={`overflow-hidden shadow-sm border cursor-pointer transition-all duration-200 ease-out hover:shadow-md min-w-[200px] max-w-[280px] ${
+                        selectedCardId === card.id 
+                          ? (isDarkMode 
+                              ? 'ring-2 ring-blue-500/80 bg-slate-800 border-blue-500/50' 
+                              : 'ring-2 ring-blue-500/80 bg-blue-50 border-blue-500/50')
+                          : (isDarkMode 
+                              ? 'bg-slate-800/70 border-slate-700 hover:bg-slate-800' 
+                              : 'bg-white border-gray-200 hover:bg-gray-50')
+                      }`}
+                      onClick={() => handleSelectCard(card.id)}
+                    >
+                      <CardHeader className={`flex flex-row items-center justify-between p-3 ${
+                        isDarkMode ? 'border-slate-700' : 'border-gray-200'
+                      }`}>
+                        <div className="flex items-center flex-1 min-w-0">
+                          <span className="mr-2 flex-shrink-0">{card.icon}</span>
+                          {editingCardId === card.id ? (
+                            <Input
+                              value={editingTitle}
+                              onChange={(e) => setEditingTitle(e.target.value)}
+                              onKeyDown={handleKeyPress}
+                              onBlur={handleSaveTitle}
+                              className={`text-sm font-medium bg-transparent border-none p-0 h-auto focus:ring-0 flex-1 min-w-0 ${
+                                isDarkMode ? 'text-white' : 'text-gray-900'
+                              }`}
+                              autoFocus
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          ) : (
+                            <CardTitle 
+                              className={`text-sm font-medium cursor-pointer truncate flex-1 min-w-0 ${
+                                isDarkMode ? 'text-white' : 'text-gray-900'
+                              }`}
+                              onDoubleClick={(e) => {
+                                e.stopPropagation();
+                                handleDoubleClickTitle(card.id, card.title);
+                              }}
+                            >
+                              {card.title}
+                            </CardTitle>
+                          )}
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleCardState(card.id);
+                          }} 
+                          className={`ml-2 h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                        >
+                          <Maximize2 className="h-3 w-3" />
+                        </Button>
+                      </CardHeader>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -818,24 +844,23 @@ const Chat = () => {
         {/* Input Field */}
         <motion.div 
           className="mt-8"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.3, duration: 0.4, ease: "easeOut" }}
         >
-          <div className={`border rounded-xl p-4 shadow-sm ${
+          <div className={`border rounded-xl p-4 shadow-sm transition-all duration-200 ${
             isDarkMode 
               ? 'bg-slate-800/50 border-slate-700' 
               : 'bg-white border-gray-200'
           }`}>
             <div className="flex items-center space-x-2">
               <Input 
-                className={`flex-1 border-0 bg-transparent focus:ring-0 h-12 ${
+                className={`flex-1 border-0 bg-transparent focus:ring-0 h-12 transition-all duration-200 ${
                   isDarkMode ? 'text-white placeholder:text-gray-400' : 'text-gray-900'
                 } ${!selectedCardId ? 'opacity-70' : ''}`}
                 placeholder={selectedCardId 
                   ? `Type in "${chatCards.find(card => card.id === selectedCardId)?.title}" chat...` 
-                  : "Select a chat first..."
-                }
+                  : "Select a chat first..."}
                 value={inputMessage}
                 onChange={e => setInputMessage(e.target.value)}
                 onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
@@ -846,8 +871,8 @@ const Chat = () => {
                 variant="outline"
                 onClick={handleAddImage}
                 disabled={!selectedCardId}
-                className={`h-12 ${
-                  isDarkMode ? 'border-slate-600 text-green-400 hover:text-green-300 hover:bg-slate-700' : 'border-gray-300 text-green-600 hover:text-green-700'
+                className={`h-12 transition-all duration-200 ${
+                  isDarkMode ? 'border-slate-600 text-green-400 hover:text-green-300 hover:bg-slate-700/50' : 'border-gray-300 text-green-600 hover:text-green-700 hover:bg-green-50'
                 } ${!selectedCardId ? 'opacity-70' : ''}`}
               >
                 <Image className="h-5 w-5" />
@@ -856,7 +881,7 @@ const Chat = () => {
                 size="lg" 
                 onClick={handleSendMessage}
                 disabled={!selectedCardId}
-                className={`bg-blue-600 hover:bg-blue-700 text-white h-12 ${
+                className={`bg-blue-600 hover:bg-blue-700 text-white h-12 transition-all duration-200 ${
                   !selectedCardId ? 'opacity-70' : ''
                 }`}
               >
@@ -870,17 +895,17 @@ const Chat = () => {
         {/* Tags Section */}
         <motion.div 
           className="mt-8 flex flex-wrap gap-2"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+          transition={{ delay: 0.5, duration: 0.4, ease: "easeOut" }}
         >
           {['#assignment', '#travel', '#food', '#ideas'].map((tag, idx) => (
             <Button 
               key={tag}
               variant="outline" 
-              className={`${
+              className={`transition-all duration-200 ${
                 isDarkMode 
-                  ? 'bg-slate-800/50 text-slate-300 border-slate-600 hover:text-white hover:bg-slate-700' 
+                  ? 'bg-slate-800/50 text-slate-300 border-slate-600 hover:text-white hover:bg-slate-700/50' 
                   : 'bg-gray-50 text-gray-700 border-gray-300 hover:bg-gray-100'
               }`}
             >
@@ -899,20 +924,20 @@ const Chat = () => {
           className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.6, duration: 0.4, ease: "easeOut" }}
         >
           {['Tasks Completed', 'Premium Credits', 'Response Time', 'Satisfaction'].map((stat, i) => (
             <motion.div 
               key={stat} 
-              className={`rounded-xl p-4 text-center border ${
+              className={`rounded-xl p-4 text-center border transition-all duration-200 hover:shadow-md ${
                 isDarkMode 
                   ? 'bg-slate-800/50 border-slate-700' 
                   : 'bg-white border-gray-200'
               }`}
-              whileHover={{ scale: 1.02 }}
-              initial={{ y: 20, opacity: 0 }}
+              whileHover={{ scale: 1.02, transition: { duration: 0.2, ease: "easeOut" } }}
+              initial={{ y: 15, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 1 + i * 0.1 }}
+              transition={{ delay: 0.7 + i * 0.05, duration: 0.3, ease: "easeOut" }}
             >
               <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 {stat}
@@ -944,9 +969,9 @@ const Chat = () => {
               <Button
                 onClick={() => handlePinWithDuration('8hours')}
                 variant="outline"
-                className={`w-full justify-start ${
+                className={`w-full justify-start transition-all duration-200 ${
                   isDarkMode 
-                    ? 'border-slate-600 text-orange-400 hover:text-orange-300 hover:bg-slate-700 hover:border-orange-400' 
+                    ? 'border-slate-600 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 hover:border-orange-400' 
                     : 'border-gray-300 text-orange-600 hover:text-orange-700 hover:bg-orange-50 hover:border-orange-400'
                 }`}
               >
@@ -955,9 +980,9 @@ const Chat = () => {
               <Button
                 onClick={() => handlePinWithDuration('1week')}
                 variant="outline"
-                className={`w-full justify-start ${
+                className={`w-full justify-start transition-all duration-200 ${
                   isDarkMode 
-                    ? 'border-slate-600 text-purple-400 hover:text-purple-300 hover:bg-slate-700 hover:border-purple-400' 
+                    ? 'border-slate-600 text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 hover:border-purple-400' 
                     : 'border-gray-300 text-purple-600 hover:text-purple-700 hover:bg-purple-50 hover:border-purple-400'
                 }`}
               >
@@ -966,9 +991,9 @@ const Chat = () => {
               <Button
                 onClick={() => handlePinWithDuration('forever')}
                 variant="outline"
-                className={`w-full justify-start ${
+                className={`w-full justify-start transition-all duration-200 ${
                   isDarkMode 
-                    ? 'border-slate-600 text-yellow-400 hover:text-yellow-300 hover:bg-slate-700 hover:border-yellow-400' 
+                    ? 'border-slate-600 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/10 hover:border-yellow-400' 
                     : 'border-gray-300 text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 hover:border-yellow-400'
                 }`}
               >
