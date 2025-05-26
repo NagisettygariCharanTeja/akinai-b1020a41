@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image, Download, Trash2, Search, Moon, Sun, Plus, Menu, Pin, MoreVertical, Settings } from 'lucide-react';
+import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image, Trash2, Moon, Sun, Plus, Pin, MoreVertical, Settings, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { MistralSettings } from '@/components/MistralSettings';
@@ -29,9 +29,7 @@ const Chat = () => {
   const [minimizedCards, setMinimizedCards] = useState<Record<string, boolean>>({});
   const [inputMessage, setInputMessage] = useState('');
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
   const [pinDialogOpen, setPinDialogOpen] = useState(false);
@@ -40,34 +38,15 @@ const Chat = () => {
   const messageRefs = useRef<Record<string, Record<number, HTMLDivElement | null>>>({});
   const { sendMessage, loading, isConfigured } = useMistralChat();
 
-  // Initialize chatCards state with default cards
+  // Initialize with one default chat
   const [chatCards, setChatCards] = useState<ChatCard[]>([
     {
-      id: 'assignment',
-      title: 'Assignment Help',
-      icon: <Sparkles className="h-5 w-5 text-blue-500" />,
-      messages: []
-    },
-    {
-      id: 'travel',
-      title: 'Travel Planning',
-      icon: <Zap className="h-5 w-5 text-green-500" />,
-      messages: []
-    },
-    {
-      id: 'general',
-      title: 'General Chat',
-      icon: <Star className="h-5 w-5 text-purple-500" />,
+      id: 'new-chat-1',
+      title: 'New Chat',
+      icon: <MessageSquare className="h-5 w-5 text-blue-500" />,
       messages: []
     }
   ]);
-
-  const chatTemplates = [
-    { name: 'Study Help', prompt: 'I need help studying for...' },
-    { name: 'Trip Planning', prompt: 'Help me plan a trip to...' },
-    { name: 'Recipe Ideas', prompt: 'I need healthy meal ideas for...' },
-    { name: 'Work Project', prompt: 'I need assistance with my work project about...' }
-  ];
 
   useEffect(() => {
     setTimeout(() => {
@@ -77,8 +56,41 @@ const Chat = () => {
       });
     }, 1000);
 
-    setSelectedCardId('assignment');
+    setSelectedCardId('new-chat-1');
   }, []);
+
+  // Function to generate chat title and icon based on conversation
+  const generateChatTitleAndIcon = (messages: Message[]) => {
+    if (messages.length === 0) return { title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> };
+    
+    const firstUserMessage = messages.find(m => m.isUser)?.content.toLowerCase() || '';
+    
+    // Simple keyword matching for title and icon generation
+    if (firstUserMessage.includes('code') || firstUserMessage.includes('programming') || firstUserMessage.includes('javascript') || firstUserMessage.includes('python')) {
+      return { title: 'Coding Help', icon: <Zap className="h-5 w-5 text-green-500" /> };
+    } else if (firstUserMessage.includes('work') || firstUserMessage.includes('business') || firstUserMessage.includes('project')) {
+      return { title: 'Work Project', icon: <Zap className="h-5 w-5 text-purple-500" /> };
+    } else if (firstUserMessage.includes('study') || firstUserMessage.includes('learn') || firstUserMessage.includes('homework') || firstUserMessage.includes('assignment')) {
+      return { title: 'Study Help', icon: <Zap className="h-5 w-5 text-blue-500" /> };
+    } else if (firstUserMessage.includes('travel') || firstUserMessage.includes('trip') || firstUserMessage.includes('vacation')) {
+      return { title: 'Travel Planning', icon: <Zap className="h-5 w-5 text-orange-500" /> };
+    } else if (firstUserMessage.includes('music') || firstUserMessage.includes('song') || firstUserMessage.includes('artist')) {
+      return { title: 'Music Chat', icon: <Zap className="h-5 w-5 text-pink-500" /> };
+    } else if (firstUserMessage.includes('book') || firstUserMessage.includes('read') || firstUserMessage.includes('story')) {
+      return { title: 'Literature', icon: <Zap className="h-5 w-5 text-indigo-500" /> };
+    } else if (firstUserMessage.includes('game') || firstUserMessage.includes('gaming') || firstUserMessage.includes('play')) {
+      return { title: 'Gaming', icon: <Zap className="h-5 w-5 text-red-500" /> };
+    } else if (firstUserMessage.includes('recipe') || firstUserMessage.includes('food') || firstUserMessage.includes('cook')) {
+      return { title: 'Cooking', icon: <Zap className="h-5 w-5 text-yellow-500" /> };
+    } else if (firstUserMessage.includes('love') || firstUserMessage.includes('relationship') || firstUserMessage.includes('dating')) {
+      return { title: 'Relationship', icon: <Zap className="h-5 w-5 text-red-400" /> };
+    } else {
+      // Generate a simple title from the first few words
+      const words = firstUserMessage.split(' ').slice(0, 3).join(' ');
+      const title = words.length > 20 ? words.substring(0, 20) + '...' : words;
+      return { title: title || 'General Chat', icon: <Zap className="h-5 w-5 text-purple-500" /> };
+    }
+  };
 
   const toggleCardState = (cardId: string) => {
     setMinimizedCards(prev => ({
@@ -98,7 +110,7 @@ const Chat = () => {
     }
 
     if (!isConfigured()) {
-      toast.error("Mistral not configured", {
+      toast.error("API not configured", {
         description: "Please configure your API settings first",
       });
       setSettingsOpen(true);
@@ -127,41 +139,44 @@ const Chat = () => {
     const userInput = inputMessage;
     setInputMessage('');
 
-    toast.info("Processing...", {
-      description: "Getting response from Mistral AI",
-      icon: <Sparkles className="h-4 w-4 text-blue-500" />
-    });
-
     try {
       // Get current conversation history
       const currentCard = chatCards.find(card => card.id === selectedCardId);
       const conversationHistory = currentCard?.messages || [];
 
-      // Send to Mistral API
+      // Send to Together.ai API
       const response = await sendMessage(userInput, conversationHistory);
 
-      // Add AI response
+      // Add AI response and update title/icon if it's the first exchange
       setChatCards(prev => {
         return prev.map(card => {
           if (card.id === selectedCardId) {
+            const updatedMessages = [
+              ...card.messages,
+              {
+                content: response,
+                isUser: false
+              }
+            ];
+
+            // Update title and icon if this is the first exchange and title is still "New Chat"
+            if (card.title === 'New Chat' && updatedMessages.length >= 2) {
+              const { title, icon } = generateChatTitleAndIcon(updatedMessages);
+              return {
+                ...card,
+                title,
+                icon,
+                messages: updatedMessages
+              };
+            }
+
             return {
               ...card,
-              messages: [
-                ...card.messages,
-                {
-                  content: response,
-                  isUser: false
-                }
-              ]
+              messages: updatedMessages
             };
           }
           return card;
         });
-      });
-
-      toast.success("Response received", {
-        description: "Mistral AI has responded",
-        icon: <Sparkles className="h-4 w-4 text-green-500" />
       });
 
     } catch (error) {
@@ -192,27 +207,11 @@ const Chat = () => {
     setSelectedCardId(cardId);
   };
 
-  const handleExportChat = () => {
-    if (selectedCardId) {
-      const selectedChat = chatCards.find(card => card.id === selectedCardId);
-      if (selectedChat) {
-        const chatData = JSON.stringify(selectedChat, null, 2);
-        const blob = new Blob([chatData], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${selectedChat.title}-chat.json`;
-        a.click();
-        toast.success("Chat exported successfully");
-      }
-    }
-  };
-
   const handleClearChat = () => {
     if (selectedCardId) {
       setChatCards(prev => prev.map(card => 
         card.id === selectedCardId 
-          ? { ...card, messages: [] }
+          ? { ...card, messages: [], title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> }
           : card
       ));
       toast.success("Chat cleared");
@@ -220,11 +219,11 @@ const Chat = () => {
   };
 
   const handleNewChat = () => {
-    const newChatId = `chat-${Date.now()}`;
+    const newChatId = `new-chat-${Date.now()}`;
     const newChat = {
       id: newChatId,
       title: 'New Chat',
-      icon: <Sparkles className="h-5 w-5 text-blue-500" />,
+      icon: <MessageSquare className="h-5 w-5 text-blue-500" />,
       messages: []
     };
     setChatCards(prev => [...prev, newChat]);
@@ -274,7 +273,6 @@ const Chat = () => {
       } else if (duration === '1week') {
         pinnedUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
       }
-      // forever = null (default)
 
       setChatCards(prev => prev.map(card => {
         if (card.id === selectedCardId) {
@@ -316,7 +314,6 @@ const Chat = () => {
     const messageRef = messageRefs.current[cardId]?.[messageIndex];
     if (messageRef) {
       messageRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // Add a brief highlight effect
       messageRef.style.backgroundColor = isDarkMode ? '#1e40af' : '#bfdbfe';
       setTimeout(() => {
         messageRef.style.backgroundColor = '';
@@ -326,17 +323,13 @@ const Chat = () => {
 
   const isMessagePinned = (message: Message) => {
     if (!message.isPinned) return false;
-    if (!message.pinnedUntil) return true; // forever
+    if (!message.pinnedUntil) return true;
     return new Date() < message.pinnedUntil;
   };
 
-  const filteredCards = chatCards.filter(card => 
-    card.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   // Calculate layout based on minimized cards
-  const maximizedCards = filteredCards.filter(card => !minimizedCards[card.id]);
-  const minimizedCardsList = filteredCards.filter(card => minimizedCards[card.id]);
+  const maximizedCards = chatCards.filter(card => !minimizedCards[card.id]);
+  const minimizedCardsList = chatCards.filter(card => minimizedCards[card.id]);
   const hasOnlyOneMaximized = maximizedCards.length === 1;
 
   const containerVariants = {
@@ -398,55 +391,6 @@ const Chat = () => {
         : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
     }`}>
       
-      {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full w-80 transform transition-transform duration-300 z-20 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } ${isDarkMode ? 'bg-slate-800/95' : 'bg-white/95'} backdrop-blur-md border-r ${
-        isDarkMode ? 'border-slate-700' : 'border-gray-200'
-      }`}>
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              Chat Templates
-            </h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSidebarOpen(false)}
-              className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
-            >
-              ×
-            </Button>
-          </div>
-          
-          <div className="space-y-3">
-            {chatTemplates.map((template, idx) => (
-              <Button
-                key={idx}
-                variant="ghost"
-                className={`w-full justify-start ${
-                  isDarkMode ? 'text-slate-300 hover:text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'
-                }`}
-                onClick={() => {
-                  setInputMessage(template.prompt);
-                  setSidebarOpen(false);
-                }}
-              >
-                {template.name}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/20 z-10"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
       <div className="container mx-auto max-w-7xl px-4 py-8">
         {/* Header */}
         <motion.div 
@@ -455,45 +399,18 @@ const Chat = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         >
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSidebarOpen(true)}
-              className={`${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-            
-            <div className="flex items-center space-x-3">
-              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                akinAI
-              </h1>
-              <span className={`text-xs px-2 py-1 rounded-full ${
-                isDarkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'
-              }`}>
-                PREMIUM
-              </span>
-            </div>
+          <div className="flex items-center space-x-3">
+            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              akinAI
+            </h1>
+            <span className={`text-xs px-2 py-1 rounded-full ${
+              isDarkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'
+            }`}>
+              PREMIUM
+            </span>
           </div>
           
           <div className="flex items-center space-x-2">
-            <div className="relative">
-              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
-                isDarkMode ? 'text-gray-400' : 'text-gray-500'
-              }`} />
-              <Input
-                placeholder="Search chats..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={`pl-10 w-48 ${
-                  isDarkMode 
-                    ? 'bg-slate-800 border-slate-600 text-white placeholder:text-gray-400' 
-                    : 'bg-white border-gray-300 text-gray-900'
-                }`}
-              />
-            </div>
-            
             <Button
               variant="ghost"
               size="sm"
@@ -534,15 +451,6 @@ const Chat = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleExportChat}
-              className={isDarkMode ? 'border-slate-600 text-blue-400 hover:text-blue-300 hover:bg-slate-700/50' : 'border-gray-300 text-blue-600 hover:text-blue-700 hover:bg-blue-50'}
-            >
-              <Download className="h-4 w-4 mr-1" />
-              Export
-            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -642,7 +550,7 @@ const Chat = () => {
                       </CardHeader>
                       
                       <CardContent className="p-4 flex-1 flex flex-col">
-                        {/* Pinned Messages Section - Sticky at top */}
+                        {/* Pinned Messages Section */}
                         {pinnedMessages.length > 0 && (
                           <div className={`mb-4 p-3 rounded-lg border-l-4 border-yellow-500 ${
                             isDarkMode ? 'bg-yellow-500/10 border-yellow-500/50' : 'bg-yellow-50 border-yellow-500'
@@ -754,7 +662,7 @@ const Chat = () => {
           )}
         </AnimatePresence>
 
-        {/* Minimized Cards Section - Chrome Tab Style */}
+        {/* Minimized Cards Section */}
         <AnimatePresence>
           {minimizedCardsList.length > 0 && (
             <motion.div 
@@ -1009,7 +917,7 @@ const Chat = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Mistral Settings Dialog */}
+      {/* API Settings Dialog */}
       <MistralSettings 
         open={settingsOpen} 
         onOpenChange={setSettingsOpen} 

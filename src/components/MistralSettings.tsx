@@ -93,7 +93,7 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
         <DialogHeader>
           <DialogTitle className={`flex items-center space-x-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             <Settings className="h-5 w-5" />
-            <span>Together.ai Settings</span>
+            <span>API Settings</span>
           </DialogTitle>
         </DialogHeader>
         
@@ -137,7 +137,11 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
               </SelectTrigger>
               <SelectContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}>
                 {models.map(model => (
-                  <SelectItem key={model.value} value={model.value}>
+                  <SelectItem 
+                    key={model.value} 
+                    value={model.value}
+                    className={isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-900 hover:bg-gray-100'}
+                  >
                     {model.label}
                   </SelectItem>
                 ))}
@@ -178,10 +182,10 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
           <div>
             <Label className={isDarkMode ? 'text-slate-300' : 'text-gray-700'}>
               System Prompt
-              <span className={`text-xs block mt-1 mb-4 ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
-                Defines the AI's behavior, personality, and response style for all conversations
-              </span>
             </Label>
+            <span className={`text-xs block mt-1 mb-3 ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+              Defines the AI's behavior, personality, and response style for all conversations
+            </span>
             <Textarea 
               value={config.systemPrompt} 
               onChange={e => setConfig({
