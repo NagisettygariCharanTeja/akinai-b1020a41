@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -34,6 +34,7 @@ const Chat = () => {
   const [editingTitle, setEditingTitle] = useState('');
   const [pinDialogOpen, setPinDialogOpen] = useState(false);
   const [selectedMessageIndex, setSelectedMessageIndex] = useState<number | null>(null);
+  const messageRefs = useRef<Record<string, Record<number, HTMLDivElement | null>>>({});
   const [chatCards, setChatCards] = useState<ChatCard[]>([
     {
       id: 'assignment',
@@ -324,6 +325,18 @@ const Chat = () => {
     toast.success("Message unpinned");
   };
 
+  const scrollToMessage = (cardId: string, messageIndex: number) => {
+    const messageRef = messageRefs.current[cardId]?.[messageIndex];
+    if (messageRef) {
+      messageRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Add a brief highlight effect
+      messageRef.style.backgroundColor = isDarkMode ? '#1e40af' : '#bfdbfe';
+      setTimeout(() => {
+        messageRef.style.backgroundColor = '';
+      }, 1000);
+    }
+  };
+
   const isMessagePinned = (message: Message) => {
     if (!message.isPinned) return false;
     if (!message.pinnedUntil) return true; // forever
@@ -508,137 +521,182 @@ const Chat = () => {
           initial="hidden"
           animate="show"
         >
-          {filteredCards.map((card, idx) => (
-            <motion.div 
-              key={card.id} 
-              variants={itemVariants} 
-              whileHover={{ y: -2 }}
-              className="flex h-full"
-              onClick={() => handleSelectCard(card.id)}
-            >
-              <Card 
-                className={`overflow-hidden shadow-sm border cursor-pointer flex flex-col w-full h-full transition-all duration-200 ${
-                  selectedCardId === card.id 
-                    ? (isDarkMode 
-                        ? 'ring-2 ring-blue-500 bg-slate-800 border-blue-500' 
-                        : 'ring-2 ring-blue-500 bg-blue-50 border-blue-500')
-                    : (isDarkMode 
-                        ? 'bg-slate-800/50 border-slate-700 hover:bg-slate-800' 
-                        : 'bg-white border-gray-200 hover:bg-gray-50')
-                }`}
+          {filteredCards.map((card, idx) => {
+            const pinnedMessages = card.messages.filter((message, index) => isMessagePinned(message)).map((message, originalIndex) => {
+              const actualIndex = card.messages.findIndex(m => m === message);
+              return { message, index: actualIndex };
+            });
+            
+            return (
+              <motion.div 
+                key={card.id} 
+                variants={itemVariants} 
+                whileHover={{ y: -2 }}
+                className="flex h-full"
+                onClick={() => handleSelectCard(card.id)}
               >
-                <CardHeader className={`flex flex-row items-center justify-between p-4 border-b ${
-                  isDarkMode ? 'border-slate-700' : 'border-gray-200'
-                }`}>
-                  <div className="flex items-center flex-1">
-                    <span className="mr-2">{card.icon}</span>
-                    {editingCardId === card.id ? (
-                      <Input
-                        value={editingTitle}
-                        onChange={(e) => setEditingTitle(e.target.value)}
-                        onKeyDown={handleKeyPress}
-                        onBlur={handleSaveTitle}
-                        className={`text-lg font-medium bg-transparent border-none p-0 h-auto focus:ring-0 ${
-                          isDarkMode ? 'text-white' : 'text-gray-900'
-                        }`}
-                        autoFocus
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    ) : (
-                      <CardTitle 
-                        className={`text-lg font-medium cursor-pointer ${
-                          isDarkMode ? 'text-white' : 'text-gray-900'
-                        }`}
-                        onDoubleClick={(e) => {
-                          e.stopPropagation();
-                          handleDoubleClickTitle(card.id, card.title);
-                        }}
-                      >
-                        {card.title}
-                      </CardTitle>
-                    )}
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleCardState(card.id);
-                    }} 
-                    className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
-                  >
-                    {minimizedCards[card.id] ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
-                  </Button>
-                </CardHeader>
-                
-                {!minimizedCards[card.id] && (
-                  <CardContent className="p-4 flex-1">
-                    <ScrollArea className="h-[500px] w-full">
-                      <div className="space-y-3 pr-4">
-                        {card.messages.map((message, idx) => (
-                          <motion.div 
-                            key={idx} 
-                            className={`${message.isUser ? 'text-right' : 'text-left'} group relative`}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: idx * 0.1 }}
-                          >
-                            <div className={`inline-block p-3 rounded-lg max-w-[85%] relative ${
-                              message.isUser 
-                                ? 'bg-blue-600 text-white ml-auto' 
-                                : (isDarkMode 
-                                    ? 'bg-slate-700 text-white border border-slate-600' 
-                                    : 'bg-gray-100 text-gray-900 border border-gray-200')
-                            } ${isMessagePinned(message) ? 'ring-2 ring-yellow-500' : ''}`}>
-                              {isMessagePinned(message) && (
-                                <Pin className="absolute -top-2 -right-2 h-4 w-4 text-yellow-500 bg-slate-800 rounded-full p-0.5" />
+                <Card 
+                  className={`overflow-hidden shadow-sm border cursor-pointer flex flex-col w-full h-full transition-all duration-200 ${
+                    selectedCardId === card.id 
+                      ? (isDarkMode 
+                          ? 'ring-2 ring-blue-500 bg-slate-800 border-blue-500' 
+                          : 'ring-2 ring-blue-500 bg-blue-50 border-blue-500')
+                      : (isDarkMode 
+                          ? 'bg-slate-800/50 border-slate-700 hover:bg-slate-800' 
+                          : 'bg-white border-gray-200 hover:bg-gray-50')
+                  }`}
+                >
+                  <CardHeader className={`flex flex-row items-center justify-between p-4 border-b ${
+                    isDarkMode ? 'border-slate-700' : 'border-gray-200'
+                  }`}>
+                    <div className="flex items-center flex-1">
+                      <span className="mr-2">{card.icon}</span>
+                      {editingCardId === card.id ? (
+                        <Input
+                          value={editingTitle}
+                          onChange={(e) => setEditingTitle(e.target.value)}
+                          onKeyDown={handleKeyPress}
+                          onBlur={handleSaveTitle}
+                          className={`text-lg font-medium bg-transparent border-none p-0 h-auto focus:ring-0 ${
+                            isDarkMode ? 'text-white' : 'text-gray-900'
+                          }`}
+                          autoFocus
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      ) : (
+                        <CardTitle 
+                          className={`text-lg font-medium cursor-pointer ${
+                            isDarkMode ? 'text-white' : 'text-gray-900'
+                          }`}
+                          onDoubleClick={(e) => {
+                            e.stopPropagation();
+                            handleDoubleClickTitle(card.id, card.title);
+                          }}
+                        >
+                          {card.title}
+                        </CardTitle>
+                      )}
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleCardState(card.id);
+                      }} 
+                      className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+                    >
+                      {minimizedCards[card.id] ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                    </Button>
+                  </CardHeader>
+                  
+                  {!minimizedCards[card.id] && (
+                    <CardContent className="p-4 flex-1 flex flex-col">
+                      {/* Pinned Messages Section - Sticky at top */}
+                      {pinnedMessages.length > 0 && (
+                        <div className={`mb-4 p-3 rounded-lg border-l-4 border-yellow-500 ${
+                          isDarkMode ? 'bg-yellow-500/10 border-yellow-500/50' : 'bg-yellow-50 border-yellow-500'
+                        }`}>
+                          <div className="flex items-center mb-2">
+                            <Pin className="h-4 w-4 text-yellow-500 mr-2" />
+                            <span className={`text-sm font-medium ${isDarkMode ? 'text-yellow-400' : 'text-yellow-700'}`}>
+                              Pinned Messages
+                            </span>
+                          </div>
+                          <div className="space-y-2">
+                            {pinnedMessages.map(({ message, index }) => (
+                              <div 
+                                key={index}
+                                className={`p-2 rounded cursor-pointer transition-colors ${
+                                  isDarkMode ? 'bg-slate-800/50 hover:bg-slate-700/50 text-slate-200' : 'bg-white hover:bg-gray-50 text-gray-800'
+                                }`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  scrollToMessage(card.id, index);
+                                }}
+                              >
+                                <div className="text-sm line-clamp-2">
+                                  {message.content}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <ScrollArea className="h-[500px] w-full flex-1">
+                        <div className="space-y-3 pr-4">
+                          {card.messages.map((message, idx) => (
+                            <motion.div 
+                              key={idx} 
+                              className={`${message.isUser ? 'text-right' : 'text-left'} group relative`}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: idx * 0.1 }}
+                              ref={el => {
+                                if (!messageRefs.current[card.id]) {
+                                  messageRefs.current[card.id] = {};
+                                }
+                                messageRefs.current[card.id][idx] = el;
+                              }}
+                            >
+                              <div className={`inline-block p-3 rounded-lg max-w-[85%] relative transition-colors ${
+                                message.isUser 
+                                  ? 'bg-blue-600 text-white ml-auto' 
+                                  : (isDarkMode 
+                                      ? 'bg-slate-700 text-white border border-slate-600' 
+                                      : 'bg-gray-100 text-gray-900 border border-gray-200')
+                              } ${isMessagePinned(message) ? 'ring-2 ring-yellow-500' : ''}`}>
+                                {isMessagePinned(message) && (
+                                  <Pin className="absolute -top-2 -right-2 h-4 w-4 text-yellow-500 bg-slate-800 rounded-full p-0.5" />
+                                )}
+                                {message.content}
+                              </div>
+                              {!message.isUser && (
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className={`opacity-0 group-hover:opacity-100 transition-opacity ml-2 ${
+                                        isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'
+                                      }`}
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <MoreVertical className="h-3 w-3" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}>
+                                    {isMessagePinned(message) ? (
+                                      <DropdownMenuItem
+                                        onClick={() => handleUnpinMessage(card.id, idx)}
+                                        className={isDarkMode ? 'text-slate-300 hover:text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'}
+                                      >
+                                        <Pin className="h-4 w-4 mr-2" />
+                                        Unpin message
+                                      </DropdownMenuItem>
+                                    ) : (
+                                      <DropdownMenuItem
+                                        onClick={() => handlePinMessage(card.id, idx)}
+                                        className={isDarkMode ? 'text-slate-300 hover:text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'}
+                                      >
+                                        <Pin className="h-4 w-4 mr-2" />
+                                        Pin message
+                                      </DropdownMenuItem>
+                                    )}
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               )}
-                              {message.content}
-                            </div>
-                            {!message.isUser && (
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className={`opacity-0 group-hover:opacity-100 transition-opacity ml-2 ${
-                                      isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'
-                                    }`}
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <MoreVertical className="h-3 w-3" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}>
-                                  {isMessagePinned(message) ? (
-                                    <DropdownMenuItem
-                                      onClick={() => handleUnpinMessage(card.id, idx)}
-                                      className={isDarkMode ? 'text-slate-300 hover:text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'}
-                                    >
-                                      <Pin className="h-4 w-4 mr-2" />
-                                      Unpin message
-                                    </DropdownMenuItem>
-                                  ) : (
-                                    <DropdownMenuItem
-                                      onClick={() => handlePinMessage(card.id, idx)}
-                                      className={isDarkMode ? 'text-slate-300 hover:text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'}
-                                    >
-                                      <Pin className="h-4 w-4 mr-2" />
-                                      Pin message
-                                    </DropdownMenuItem>
-                                  )}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            )}
-                          </motion.div>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                  </CardContent>
-                )}
-              </Card>
-            </motion.div>
-          ))}
+                            </motion.div>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    </CardContent>
+                  )}
+                </Card>
+              </motion.div>
+            );
+          })}
         </motion.div>
 
         {/* Input Field */}
@@ -771,25 +829,31 @@ const Chat = () => {
                 onClick={() => handlePinWithDuration('8hours')}
                 variant="outline"
                 className={`w-full justify-start ${
-                  isDarkMode ? 'border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700' : 'border-gray-300'
+                  isDarkMode 
+                    ? 'border-slate-600 text-orange-400 hover:text-orange-300 hover:bg-slate-700 hover:border-orange-400' 
+                    : 'border-gray-300 text-orange-600 hover:text-orange-700 hover:bg-orange-50 hover:border-orange-400'
                 }`}
               >
-                📅 8 Hours
+                ⏰ 8 Hours
               </Button>
               <Button
                 onClick={() => handlePinWithDuration('1week')}
                 variant="outline"
                 className={`w-full justify-start ${
-                  isDarkMode ? 'border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700' : 'border-gray-300'
+                  isDarkMode 
+                    ? 'border-slate-600 text-purple-400 hover:text-purple-300 hover:bg-slate-700 hover:border-purple-400' 
+                    : 'border-gray-300 text-purple-600 hover:text-purple-700 hover:bg-purple-50 hover:border-purple-400'
                 }`}
               >
-                📆 1 Week
+                📅 1 Week
               </Button>
               <Button
                 onClick={() => handlePinWithDuration('forever')}
                 variant="outline"
                 className={`w-full justify-start ${
-                  isDarkMode ? 'border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700' : 'border-gray-300'
+                  isDarkMode 
+                    ? 'border-slate-600 text-yellow-400 hover:text-yellow-300 hover:bg-slate-700 hover:border-yellow-400' 
+                    : 'border-gray-300 text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 hover:border-yellow-400'
                 }`}
               >
                 ♾️ Forever
