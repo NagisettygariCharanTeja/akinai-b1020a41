@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -5,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image, Trash2, Moon, Sun, Plus, Pin, MoreVertical, Settings, MessageSquare } from 'lucide-react';
+import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image, Trash2, Moon, Sun, Plus, Pin, MoreVertical, Settings, MessageSquare, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { MistralSettings } from '@/components/MistralSettings';
@@ -97,6 +98,26 @@ const Chat = () => {
       ...prev,
       [cardId]: !prev[cardId]
     }));
+  };
+
+  const handleDeleteChat = (cardId: string) => {
+    // Don't allow deleting if it's the only chat
+    if (chatCards.length === 1) {
+      toast.error("Cannot delete the last chat");
+      return;
+    }
+
+    setChatCards(prev => prev.filter(card => card.id !== cardId));
+    
+    // If the deleted chat was selected, select another one
+    if (selectedCardId === cardId) {
+      const remainingCards = chatCards.filter(card => card.id !== cardId);
+      if (remainingCards.length > 0) {
+        setSelectedCardId(remainingCards[0].id);
+      }
+    }
+    
+    toast.success("Chat deleted");
   };
 
   const handleSendMessage = async () => {
@@ -207,15 +228,13 @@ const Chat = () => {
     setSelectedCardId(cardId);
   };
 
-  const handleClearChat = () => {
-    if (selectedCardId) {
-      setChatCards(prev => prev.map(card => 
-        card.id === selectedCardId 
-          ? { ...card, messages: [], title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> }
-          : card
-      ));
-      toast.success("Chat cleared");
-    }
+  const handleClearChat = (cardId: string) => {
+    setChatCards(prev => prev.map(card => 
+      card.id === cardId 
+        ? { ...card, messages: [], title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> }
+        : card
+    ));
+    toast.success("Chat cleared");
   };
 
   const handleNewChat = () => {
@@ -391,10 +410,10 @@ const Chat = () => {
         : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
     }`}>
       
-      <div className="container mx-auto max-w-7xl px-4 py-8">
+      <div className="container mx-auto max-w-7xl px-4 py-4">
         {/* Header */}
         <motion.div 
-          className="flex justify-between items-center mb-8"
+          className="flex justify-between items-center mb-6"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
@@ -442,26 +461,6 @@ const Chat = () => {
             </Button>
           </div>
         </motion.div>
-
-        {/* Chat Actions */}
-        {selectedCardId && (
-          <motion.div 
-            className="flex justify-end space-x-2 mb-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleClearChat}
-              className={isDarkMode ? 'border-slate-600 text-red-400 hover:text-red-300 hover:bg-slate-700/50' : 'border-gray-300 text-red-600 hover:text-red-700 hover:bg-red-50'}
-            >
-              <Trash2 className="h-4 w-4 mr-1" />
-              Clear
-            </Button>
-          </motion.div>
-        )}
 
         {/* Maximized Chat Grid */}
         <AnimatePresence mode="wait">
@@ -536,17 +535,41 @@ const Chat = () => {
                             </CardTitle>
                           )}
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleCardState(card.id);
-                          }} 
-                          className={`transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
-                        >
-                          <Minimize2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center space-x-1">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleClearChat(card.id);
+                            }} 
+                            className={`h-8 w-8 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-orange-400 hover:bg-slate-700' : 'text-gray-600 hover:text-orange-600 hover:bg-gray-100'}`}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteChat(card.id);
+                            }} 
+                            className={`h-8 w-8 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-red-400 hover:bg-slate-700' : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'}`}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleCardState(card.id);
+                            }} 
+                            className={`h-8 w-8 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                          >
+                            <Minimize2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </CardHeader>
                       
                       <CardContent className="p-4 flex-1 flex flex-col">
@@ -725,17 +748,30 @@ const Chat = () => {
                             </CardTitle>
                           )}
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleCardState(card.id);
-                          }} 
-                          className={`ml-2 h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
-                        >
-                          <Maximize2 className="h-3 w-3" />
-                        </Button>
+                        <div className="flex items-center space-x-1 ml-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteChat(card.id);
+                            }} 
+                            className={`h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-red-400 hover:bg-slate-700' : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'}`}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleCardState(card.id);
+                            }} 
+                            className={`h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                          >
+                            <Maximize2 className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </CardHeader>
                     </Card>
                   </motion.div>
