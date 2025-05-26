@@ -5,9 +5,11 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image, Download, Trash2, Search, Moon, Sun, Plus, Menu, Pin, MoreVertical } from 'lucide-react';
+import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image, Download, Trash2, Search, Moon, Sun, Plus, Menu, Pin, MoreVertical, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import { MistralSettings } from '@/components/MistralSettings';
+import { useMistralChat } from '@/hooks/useMistralChat';
 
 interface Message {
   content: string;
@@ -34,87 +36,9 @@ const Chat = () => {
   const [editingTitle, setEditingTitle] = useState('');
   const [pinDialogOpen, setPinDialogOpen] = useState(false);
   const [selectedMessageIndex, setSelectedMessageIndex] = useState<number | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const messageRefs = useRef<Record<string, Record<number, HTMLDivElement | null>>>({});
-  const [chatCards, setChatCards] = useState<ChatCard[]>([
-    {
-      id: 'assignment',
-      title: 'Assignment Help',
-      icon: <Sparkles className="h-5 w-5 text-blue-500" />,
-      messages: [{
-        content: 'I need help with my English Literature essay on the parallels between modern politics and Orwell\'s 1984.',
-        isUser: true
-      }, {
-        content: 'Great topic choice! Let\'s break this down:',
-        isUser: false
-      }, {
-        content: '• Compare surveillance themes with modern data collection',
-        isUser: false
-      }, {
-        content: '• Analyze "doublethink" in contemporary political discourse',
-        isUser: false
-      }, {
-        content: '• Examine language manipulation ("Newspeak") in today\'s media',
-        isUser: false
-      }, {
-        content: 'Would you like me to help you develop any of these points further?',
-        isUser: false
-      }]
-    }, 
-    {
-      id: 'trip',
-      title: 'Bangkok Trip',
-      icon: <Star className="h-5 w-5 text-green-500" />,
-      messages: [{
-        content: 'I\'m planning a trip to Bangkok next month. What are some must-see places?',
-        isUser: true
-      }, {
-        content: 'Here\'s what I recommend for Bangkok:',
-        isUser: false
-      }, {
-        content: '• Grand Palace & Wat Phra Kaew - Historic royal complex',
-        isUser: false
-      }, {
-        content: '• Chatuchak Weekend Market - Massive outdoor shopping',
-        isUser: false
-      }, {
-        content: '• Wat Arun - Iconic temple on the river',
-        isUser: false
-      }, {
-        content: '• Try street food on Yaowarat Road (Chinatown)',
-        isUser: false
-      }, {
-        content: 'When exactly are you going? I can check for any special events happening then!',
-        isUser: false
-      }]
-    }, 
-    {
-      id: 'meal',
-      title: 'Meal Ideas',
-      icon: <Zap className="h-5 w-5 text-purple-500" />,
-      messages: [{
-        content: 'I need meal ideas for the week that are healthy and quick to prepare.',
-        isUser: true
-      }, {
-        content: 'Here are some quick, healthy meal ideas:',
-        isUser: false
-      }, {
-        content: '• Overnight oats with fruit and nuts',
-        isUser: false
-      }, {
-        content: '• Sheet pan chicken with roasted vegetables',
-        isUser: false
-      }, {
-        content: '• Greek yogurt bowls with honey and berries',
-        isUser: false
-      }, {
-        content: '• Quinoa salad with mixed vegetables and chickpeas',
-        isUser: false
-      }, {
-        content: 'Would you like specific recipes for any of these?',
-        isUser: false
-      }]
-    }
-  ]);
+  const { sendMessage, loading, isConfigured } = useMistralChat();
 
   const chatTemplates = [
     { name: 'Study Help', prompt: 'I need help studying for...' },
@@ -141,8 +65,60 @@ const Chat = () => {
     }));
   };
 
-  const handleSendMessage = () => {
-    if (inputMessage.trim() && selectedCardId) {
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim() || !selectedCardId) {
+      if (!selectedCardId) {
+        toast.error("No chat selected", {
+          description: "Please select a chat first",
+        });
+      }
+      return;
+    }
+
+    if (!isConfigured()) {
+      toast.error("Mistral not configured", {
+        description: "Please configure your API settings first",
+      });
+      setSettingsOpen(true);
+      return;
+    }
+
+    // Add user message immediately
+    setChatCards(prev => {
+      return prev.map(card => {
+        if (card.id === selectedCardId) {
+          return {
+            ...card,
+            messages: [
+              ...card.messages,
+              {
+                content: inputMessage,
+                isUser: true
+              }
+            ]
+          };
+        }
+        return card;
+      });
+    });
+
+    const userInput = inputMessage;
+    setInputMessage('');
+
+    toast.info("Processing...", {
+      description: "Getting response from Mistral AI",
+      icon: <Sparkles className="h-4 w-4 text-blue-500" />
+    });
+
+    try {
+      // Get current conversation history
+      const currentCard = chatCards.find(card => card.id === selectedCardId);
+      const conversationHistory = currentCard?.messages || [];
+
+      // Send to Mistral API
+      const response = await sendMessage(userInput, conversationHistory);
+
+      // Add AI response
       setChatCards(prev => {
         return prev.map(card => {
           if (card.id === selectedCardId) {
@@ -151,8 +127,8 @@ const Chat = () => {
               messages: [
                 ...card.messages,
                 {
-                  content: inputMessage,
-                  isUser: true
+                  content: response,
+                  isUser: false
                 }
               ]
             };
@@ -161,35 +137,24 @@ const Chat = () => {
         });
       });
 
-      toast.info("Message sent", {
-        description: "Your message is being processed",
-        icon: <Sparkles className="h-4 w-4 text-blue-500" />
+      toast.success("Response received", {
+        description: "Mistral AI has responded",
+        icon: <Sparkles className="h-4 w-4 text-green-500" />
       });
-      
-      setTimeout(() => {
-        setChatCards(prev => {
-          return prev.map(card => {
-            if (card.id === selectedCardId) {
-              return {
-                ...card,
-                messages: [
-                  ...card.messages,
-                  {
-                    content: `Thank you for your message: "${inputMessage}". How can I assist further with this topic?`,
-                    isUser: false
-                  }
-                ]
-              };
-            }
-            return card;
-          });
+
+    } catch (error) {
+      console.error('Failed to get response:', error);
+      // Remove the user message if API call failed
+      setChatCards(prev => {
+        return prev.map(card => {
+          if (card.id === selectedCardId) {
+            return {
+              ...card,
+              messages: card.messages.slice(0, -1) // Remove last message (user message)
+            };
+          }
+          return card;
         });
-      }, 1000);
-      
-      setInputMessage('');
-    } else if (!selectedCardId) {
-      toast.error("No chat selected", {
-        description: "Please select a chat first",
       });
     }
   };
@@ -506,6 +471,15 @@ const Chat = () => {
                 }`}
               />
             </div>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSettingsOpen(true)}
+              className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+            >
+              <Settings className="h-4 w-4" />
+            </Button>
             
             <Button
               variant="ghost"
@@ -863,30 +837,39 @@ const Chat = () => {
                   : "Select a chat first..."}
                 value={inputMessage}
                 onChange={e => setInputMessage(e.target.value)}
-                onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
-                disabled={!selectedCardId}
+                onKeyPress={e => e.key === 'Enter' && !loading && handleSendMessage()}
+                disabled={!selectedCardId || loading}
               />
               <Button 
                 size="lg" 
                 variant="outline"
                 onClick={handleAddImage}
-                disabled={!selectedCardId}
+                disabled={!selectedCardId || loading}
                 className={`h-12 transition-all duration-200 ${
                   isDarkMode ? 'border-slate-600 text-green-400 hover:text-green-300 hover:bg-slate-700/50' : 'border-gray-300 text-green-600 hover:text-green-700 hover:bg-green-50'
-                } ${!selectedCardId ? 'opacity-70' : ''}`}
+                } ${(!selectedCardId || loading) ? 'opacity-70' : ''}`}
               >
                 <Image className="h-5 w-5" />
               </Button>
               <Button 
                 size="lg" 
                 onClick={handleSendMessage}
-                disabled={!selectedCardId}
+                disabled={!selectedCardId || loading}
                 className={`bg-blue-600 hover:bg-blue-700 text-white h-12 transition-all duration-200 ${
-                  !selectedCardId ? 'opacity-70' : ''
+                  (!selectedCardId || loading) ? 'opacity-70' : ''
                 }`}
               >
-                <Send className="h-5 w-5 mr-2" />
-                Send
+                {loading ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Processing
+                  </div>
+                ) : (
+                  <>
+                    <Send className="h-5 w-5 mr-2" />
+                    Send
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -1003,6 +986,13 @@ const Chat = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Mistral Settings Dialog */}
+      <MistralSettings 
+        open={settingsOpen} 
+        onOpenChange={setSettingsOpen} 
+        isDarkMode={isDarkMode} 
+      />
     </div>
   );
 };
