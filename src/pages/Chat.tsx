@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -92,101 +91,6 @@ const Chat = () => {
       return { title: title || 'General Chat', icon: <Zap className="h-5 w-5 text-purple-500" /> };
     }
   }, []);
-
-  // Function to format LLM output with better styling
-  const formatMessage = useCallback((content: string) => {
-    // Split content into paragraphs
-    const paragraphs = content.split('\n\n');
-    
-    return paragraphs.map((paragraph, index) => {
-      // Check if it's a code block (starts and ends with ```)
-      if (paragraph.trim().startsWith('```') && paragraph.trim().endsWith('```')) {
-        const codeContent = paragraph.replace(/```[\w]*\n?/g, '').replace(/```$/g, '');
-        return (
-          <div key={index} className={`my-3 rounded-lg overflow-hidden ${
-            isDarkMode ? 'bg-slate-900 border border-slate-600' : 'bg-gray-100 border border-gray-300'
-          }`}>
-            <div className={`px-3 py-2 text-xs font-medium border-b ${
-              isDarkMode ? 'bg-slate-800 text-slate-300 border-slate-600' : 'bg-gray-200 text-gray-600 border-gray-300'
-            }`}>
-              Code
-            </div>
-            <pre className={`p-4 text-sm overflow-x-auto ${
-              isDarkMode ? 'text-slate-200' : 'text-gray-800'
-            }`}>
-              <code>{codeContent}</code>
-            </pre>
-          </div>
-        );
-      }
-      
-      // Check if it's a list (starts with - or *)
-      if (paragraph.includes('\n-') || paragraph.includes('\n*')) {
-        const lines = paragraph.split('\n');
-        const listItems = lines.filter(line => line.trim().startsWith('-') || line.trim().startsWith('*'));
-        const beforeList = lines.slice(0, lines.findIndex(line => line.trim().startsWith('-') || line.trim().startsWith('*')));
-        
-        return (
-          <div key={index} className="my-2">
-            {beforeList.length > 0 && (
-              <p className="mb-2 leading-relaxed">{beforeList.join('\n')}</p>
-            )}
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              {listItems.map((item, idx) => (
-                <li key={idx} className="leading-relaxed">
-                  {item.replace(/^[-*]\s*/, '')}
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-      }
-      
-      // Check if it's a numbered list
-      if (/^\d+\./.test(paragraph.trim())) {
-        const lines = paragraph.split('\n').filter(line => /^\d+\./.test(line.trim()));
-        return (
-          <ol key={index} className="list-decimal list-inside space-y-1 ml-4 my-2">
-            {lines.map((item, idx) => (
-              <li key={idx} className="leading-relaxed">
-                {item.replace(/^\d+\.\s*/, '')}
-              </li>
-            ))}
-          </ol>
-        );
-      }
-      
-      // Check if it's a heading (starts with #)
-      if (paragraph.trim().startsWith('#')) {
-        const level = paragraph.match(/^#+/)?.[0].length || 1;
-        const text = paragraph.replace(/^#+\s*/, '');
-        const HeadingTag = `h${Math.min(level, 6)}` as keyof JSX.IntrinsicElements;
-        
-        return (
-          <HeadingTag key={index} className={`font-semibold my-3 ${
-            level === 1 ? 'text-xl' : level === 2 ? 'text-lg' : 'text-base'
-          } ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-            {text}
-          </HeadingTag>
-        );
-      }
-      
-      // Regular paragraph with inline code formatting
-      const formattedText = paragraph.replace(/`([^`]+)`/g, (match, code) => {
-        return `<span class="inline-code px-1.5 py-0.5 rounded text-sm font-mono ${
-          isDarkMode ? 'bg-slate-700 text-slate-200' : 'bg-gray-200 text-gray-800'
-        }">${code}</span>`;
-      });
-      
-      return (
-        <p 
-          key={index} 
-          className="my-2 leading-relaxed" 
-          dangerouslySetInnerHTML={{ __html: formattedText }}
-        />
-      );
-    });
-  }, [isDarkMode]);
 
   const toggleCardState = useCallback((cardId: string) => {
     setMinimizedCards(prev => ({
@@ -718,8 +622,8 @@ const Chat = () => {
                           </div>
                         )}
                         
-                        <ScrollArea className="h-[800px] w-full flex-1">
-                          <div className="space-y-4 pr-4">
+                        <ScrollArea className="h-[500px] w-full flex-1">
+                          <div className="space-y-3 pr-4">
                             {card.messages.map((message, idx) => (
                               <motion.div 
                                 key={idx} 
@@ -738,7 +642,7 @@ const Chat = () => {
                                   messageRefs.current[card.id][idx] = el;
                                 }}
                               >
-                                <div className={`inline-block p-4 rounded-lg max-w-[85%] relative transition-all duration-200 ease-out ${
+                                <div className={`inline-block p-3 rounded-lg max-w-[85%] relative transition-all duration-200 ease-out ${
                                   message.isUser 
                                     ? 'bg-blue-600 text-white ml-auto' 
                                     : (isDarkMode 
@@ -748,13 +652,7 @@ const Chat = () => {
                                   {isMessagePinned(message) && (
                                     <Pin className="absolute -top-2 -right-2 h-4 w-4 text-yellow-500 bg-slate-800 rounded-full p-0.5" />
                                   )}
-                                  {message.isUser ? (
-                                    <div className="text-sm leading-relaxed">{message.content}</div>
-                                  ) : (
-                                    <div className="text-sm">
-                                      {formatMessage(message.content)}
-                                    </div>
-                                  )}
+                                  {message.content}
                                 </div>
                                 {!message.isUser && (
                                   <DropdownMenu>
