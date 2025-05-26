@@ -15,6 +15,12 @@ interface ChatCard {
   icon: React.ReactNode;
   lastMessage: string;
   timestamp: string;
+  messages: Message[];
+}
+
+interface Message {
+  content: string;
+  role: 'user' | 'assistant';
 }
 
 const getTopicIcon = (title: string) => {
@@ -46,7 +52,8 @@ export default function Chat() {
       title: 'New Chat',
       icon: <MessageSquare className="h-4 w-4" />,
       lastMessage: '',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      messages: []
     }
   ]);
   const [activeChatId, setActiveChatId] = useState<string>('1');
@@ -56,11 +63,15 @@ export default function Chat() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
-  const { messages, sendMessage, isLoading } = useMistralChat();
+  const { sendMessage, loading } = useMistralChat();
   
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
+
+  // Get current chat messages
+  const currentChat = chatCards.find(chat => chat.id === activeChatId);
+  const messages = currentChat?.messages || [];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -82,35 +93,64 @@ export default function Chat() {
     const userMessage = input.trim();
     setInput('');
     
-    const activeChat = chatCards.find(chat => chat.id === activeChatId);
-    if (activeChat && activeChat.title === 'New Chat' && activeChat.lastMessage === '') {
-      const newTitle = generateChatTitle(userMessage);
-      const newIcon = getTopicIcon(newTitle);
+    // Add user message to current chat
+    const newUserMessage: Message = {
+      content: userMessage,
+      role: 'user'
+    };
+
+    setChatCards(prev => prev.map(chat => {
+      if (chat.id === activeChatId) {
+        const updatedMessages = [...chat.messages, newUserMessage];
+        
+        // Update title if it's a new chat
+        let updatedChat = { ...chat, messages: updatedMessages };
+        if (chat.title === 'New Chat' && chat.lastMessage === '') {
+          const newTitle = generateChatTitle(userMessage);
+          const newIcon = getTopicIcon(newTitle);
+          updatedChat = {
+            ...updatedChat,
+            title: newTitle,
+            icon: newIcon
+          };
+        }
+        
+        updatedChat.lastMessage = userMessage;
+        updatedChat.timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        return updatedChat;
+      }
+      return chat;
+    }));
+
+    try {
+      // Get conversation history for the current chat (excluding the message we just added)
+      const conversationHistory = messages.map(msg => ({
+        content: msg.content,
+        isUser: msg.role === 'user'
+      }));
+
+      const response = await sendMessage(userMessage, conversationHistory);
       
-      setChatCards(prev => prev.map(chat => 
-        chat.id === activeChatId 
-          ? { 
-              ...chat, 
-              title: newTitle, 
-              icon: newIcon,
-              lastMessage: userMessage,
-              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            }
-          : chat
-      ));
-    } else if (activeChat) {
-      setChatCards(prev => prev.map(chat => 
-        chat.id === activeChatId 
-          ? { 
-              ...chat, 
-              lastMessage: userMessage,
-              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            }
-          : chat
-      ));
+      // Add assistant response to current chat
+      const assistantMessage: Message = {
+        content: response,
+        role: 'assistant'
+      };
+
+      setChatCards(prev => prev.map(chat => {
+        if (chat.id === activeChatId) {
+          return {
+            ...chat,
+            messages: [...chat.messages, assistantMessage],
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
+        }
+        return chat;
+      }));
+    } catch (error) {
+      console.error('Failed to send message:', error);
     }
-    
-    await sendMessage(userMessage);
   };
 
   const createNewChat = () => {
@@ -120,7 +160,8 @@ export default function Chat() {
       title: 'New Chat',
       icon: <MessageSquare className="h-4 w-4" />,
       lastMessage: '',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      messages: []
     };
     
     setChatCards(prev => [newChat, ...prev]);
@@ -316,7 +357,7 @@ export default function Chat() {
                 </div>
               </div>
             ))}
-            {isLoading && (
+            {loading && (
               <div className="flex items-start space-x-3 sm:space-x-4">
                 <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                   <AvatarFallback className="bg-purple-600">
@@ -346,11 +387,11 @@ export default function Chat() {
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message here..."
                 className={`flex-1 text-sm sm:text-base ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'}`}
-                disabled={isLoading}
+                disabled={loading}
               />
               <Button
                 onClick={handleSend}
-                disabled={isLoading || !input.trim()}
+                disabled={loading || !input.trim()}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4"
               >
                 <Send className="h-4 w-4 sm:h-5 sm:w-5" />
