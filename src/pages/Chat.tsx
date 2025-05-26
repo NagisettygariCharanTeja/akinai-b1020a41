@@ -1,930 +1,370 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image, Trash2, Moon, Sun, Plus, Pin, MoreVertical, Settings, MessageSquare } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from 'sonner';
-import { MistralSettings } from '@/components/MistralSettings';
+import { Send, Settings, Plus, Moon, Sun, MessageSquare, Bot, User, Zap, Brain, Sparkles } from 'lucide-react';
 import { useMistralChat } from '@/hooks/useMistralChat';
-
-interface Message {
-  content: string;
-  isUser: boolean;
-  isPinned?: boolean;
-  pinnedUntil?: Date | null; // null means forever
-}
+import { MistralSettings } from '@/components/MistralSettings';
 
 interface ChatCard {
   id: string;
   title: string;
   icon: React.ReactNode;
-  messages: Message[];
+  lastMessage: string;
+  timestamp: string;
 }
 
-const Chat = () => {
-  const [minimizedCards, setMinimizedCards] = useState<Record<string, boolean>>({});
-  const [inputMessage, setInputMessage] = useState('');
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  const [editingCardId, setEditingCardId] = useState<string | null>(null);
-  const [editingTitle, setEditingTitle] = useState('');
-  const [pinDialogOpen, setPinDialogOpen] = useState(false);
-  const [selectedMessageIndex, setSelectedMessageIndex] = useState<number | null>(null);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const messageRefs = useRef<Record<string, Record<number, HTMLDivElement | null>>>({});
-  const { sendMessage, loading, isConfigured } = useMistralChat();
+const getTopicIcon = (title: string) => {
+  const lowerTitle = title.toLowerCase();
+  if (lowerTitle.includes('code') || lowerTitle.includes('programming') || lowerTitle.includes('develop')) {
+    return <Bot className="h-4 w-4" />;
+  }
+  if (lowerTitle.includes('creative') || lowerTitle.includes('art') || lowerTitle.includes('design')) {
+    return <Sparkles className="h-4 w-4" />;
+  }
+  if (lowerTitle.includes('analysis') || lowerTitle.includes('data') || lowerTitle.includes('research')) {
+    return <Brain className="h-4 w-4" />;
+  }
+  if (lowerTitle.includes('quick') || lowerTitle.includes('fast') || lowerTitle.includes('help')) {
+    return <Zap className="h-4 w-4" />;
+  }
+  return <MessageSquare className="h-4 w-4" />;
+};
 
-  // Initialize with one default chat
+const generateChatTitle = (message: string): string => {
+  const words = message.split(' ').slice(0, 4);
+  return words.join(' ') + (message.split(' ').length > 4 ? '...' : '');
+};
+
+export default function Chat() {
   const [chatCards, setChatCards] = useState<ChatCard[]>([
     {
-      id: 'new-chat-1',
+      id: '1',
       title: 'New Chat',
-      icon: <MessageSquare className="h-5 w-5 text-blue-500" />,
-      messages: []
+      icon: <MessageSquare className="h-4 w-4" />,
+      lastMessage: '',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
+  const [activeChatId, setActiveChatId] = useState<string>('1');
+  const [editingTitleId, setEditingTitleId] = useState<string | null>(null);
+  const [tempTitle, setTempTitle] = useState<string>('');
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  const { messages, sendMessage, isLoading } = useMistralChat();
+  
+  const [input, setInput] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
-    setTimeout(() => {
-      toast.success("Welcome to AkinAI Premium", {
-        description: "Your AI assistant is ready to help",
-        icon: <Star className="h-4 w-4 text-blue-500" />
-      });
-    }, 1000);
+    scrollToBottom();
+  }, [messages]);
 
-    setSelectedCardId('new-chat-1');
-  }, []);
+  useEffect(() => {
+    if (editingTitleId && titleInputRef.current) {
+      titleInputRef.current.focus();
+    }
+  }, [editingTitleId]);
 
-  // Function to generate chat title and icon based on conversation
-  const generateChatTitleAndIcon = (messages: Message[]) => {
-    if (messages.length === 0) return { title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> };
+  const handleSend = async () => {
+    if (!input.trim()) return;
     
-    const firstUserMessage = messages.find(m => m.isUser)?.content.toLowerCase() || '';
+    const userMessage = input.trim();
+    setInput('');
     
-    // Simple keyword matching for title and icon generation
-    if (firstUserMessage.includes('code') || firstUserMessage.includes('programming') || firstUserMessage.includes('javascript') || firstUserMessage.includes('python')) {
-      return { title: 'Coding Help', icon: <Zap className="h-5 w-5 text-green-500" /> };
-    } else if (firstUserMessage.includes('work') || firstUserMessage.includes('business') || firstUserMessage.includes('project')) {
-      return { title: 'Work Project', icon: <Zap className="h-5 w-5 text-purple-500" /> };
-    } else if (firstUserMessage.includes('study') || firstUserMessage.includes('learn') || firstUserMessage.includes('homework') || firstUserMessage.includes('assignment')) {
-      return { title: 'Study Help', icon: <Zap className="h-5 w-5 text-blue-500" /> };
-    } else if (firstUserMessage.includes('travel') || firstUserMessage.includes('trip') || firstUserMessage.includes('vacation')) {
-      return { title: 'Travel Planning', icon: <Zap className="h-5 w-5 text-orange-500" /> };
-    } else if (firstUserMessage.includes('music') || firstUserMessage.includes('song') || firstUserMessage.includes('artist')) {
-      return { title: 'Music Chat', icon: <Zap className="h-5 w-5 text-pink-500" /> };
-    } else if (firstUserMessage.includes('book') || firstUserMessage.includes('read') || firstUserMessage.includes('story')) {
-      return { title: 'Literature', icon: <Zap className="h-5 w-5 text-indigo-500" /> };
-    } else if (firstUserMessage.includes('game') || firstUserMessage.includes('gaming') || firstUserMessage.includes('play')) {
-      return { title: 'Gaming', icon: <Zap className="h-5 w-5 text-red-500" /> };
-    } else if (firstUserMessage.includes('recipe') || firstUserMessage.includes('food') || firstUserMessage.includes('cook')) {
-      return { title: 'Cooking', icon: <Zap className="h-5 w-5 text-yellow-500" /> };
-    } else if (firstUserMessage.includes('love') || firstUserMessage.includes('relationship') || firstUserMessage.includes('dating')) {
-      return { title: 'Relationship', icon: <Zap className="h-5 w-5 text-red-400" /> };
-    } else {
-      // Generate a simple title from the first few words
-      const words = firstUserMessage.split(' ').slice(0, 3).join(' ');
-      const title = words.length > 20 ? words.substring(0, 20) + '...' : words;
-      return { title: title || 'General Chat', icon: <Zap className="h-5 w-5 text-purple-500" /> };
-    }
-  };
-
-  const toggleCardState = (cardId: string) => {
-    setMinimizedCards(prev => ({
-      ...prev,
-      [cardId]: !prev[cardId]
-    }));
-  };
-
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim() || !selectedCardId) {
-      if (!selectedCardId) {
-        toast.error("No chat selected", {
-          description: "Please select a chat first",
-        });
-      }
-      return;
-    }
-
-    if (!isConfigured()) {
-      toast.error("API not configured", {
-        description: "Please configure your API settings first",
-      });
-      setSettingsOpen(true);
-      return;
-    }
-
-    // Add user message immediately
-    setChatCards(prev => {
-      return prev.map(card => {
-        if (card.id === selectedCardId) {
-          return {
-            ...card,
-            messages: [
-              ...card.messages,
-              {
-                content: inputMessage,
-                isUser: true
-              }
-            ]
-          };
-        }
-        return card;
-      });
-    });
-
-    const userInput = inputMessage;
-    setInputMessage('');
-
-    try {
-      // Get current conversation history
-      const currentCard = chatCards.find(card => card.id === selectedCardId);
-      const conversationHistory = currentCard?.messages || [];
-
-      // Send to Together.ai API
-      const response = await sendMessage(userInput, conversationHistory);
-
-      // Add AI response and update title/icon if it's the first exchange
-      setChatCards(prev => {
-        return prev.map(card => {
-          if (card.id === selectedCardId) {
-            const updatedMessages = [
-              ...card.messages,
-              {
-                content: response,
-                isUser: false
-              }
-            ];
-
-            // Update title and icon if this is the first exchange and title is still "New Chat"
-            if (card.title === 'New Chat' && updatedMessages.length >= 2) {
-              const { title, icon } = generateChatTitleAndIcon(updatedMessages);
-              return {
-                ...card,
-                title,
-                icon,
-                messages: updatedMessages
-              };
+    const activeChat = chatCards.find(chat => chat.id === activeChatId);
+    if (activeChat && activeChat.title === 'New Chat' && activeChat.lastMessage === '') {
+      const newTitle = generateChatTitle(userMessage);
+      const newIcon = getTopicIcon(newTitle);
+      
+      setChatCards(prev => prev.map(chat => 
+        chat.id === activeChatId 
+          ? { 
+              ...chat, 
+              title: newTitle, 
+              icon: newIcon,
+              lastMessage: userMessage,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             }
-
-            return {
-              ...card,
-              messages: updatedMessages
-            };
-          }
-          return card;
-        });
-      });
-
-    } catch (error) {
-      console.error('Failed to get response:', error);
-      // Remove the user message if API call failed
-      setChatCards(prev => {
-        return prev.map(card => {
-          if (card.id === selectedCardId) {
-            return {
-              ...card,
-              messages: card.messages.slice(0, -1) // Remove last message (user message)
-            };
-          }
-          return card;
-        });
-      });
-    }
-  };
-
-  const handleAddImage = () => {
-    toast.info("Add Image", {
-      description: "Image upload feature coming soon",
-      icon: <Image className="h-4 w-4 text-green-500" />
-    });
-  };
-
-  const handleSelectCard = (cardId: string) => {
-    setSelectedCardId(cardId);
-  };
-
-  const handleClearChat = () => {
-    if (selectedCardId) {
-      setChatCards(prev => prev.map(card => 
-        card.id === selectedCardId 
-          ? { ...card, messages: [], title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> }
-          : card
+          : chat
       ));
-      toast.success("Chat cleared");
+    } else if (activeChat) {
+      setChatCards(prev => prev.map(chat => 
+        chat.id === activeChatId 
+          ? { 
+              ...chat, 
+              lastMessage: userMessage,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            }
+          : chat
+      ));
     }
+    
+    await sendMessage(userMessage);
   };
 
-  const handleNewChat = () => {
-    const newChatId = `new-chat-${Date.now()}`;
-    const newChat = {
+  const createNewChat = () => {
+    const newChatId = Date.now().toString();
+    const newChat: ChatCard = {
       id: newChatId,
       title: 'New Chat',
-      icon: <MessageSquare className="h-5 w-5 text-blue-500" />,
-      messages: []
+      icon: <MessageSquare className="h-4 w-4" />,
+      lastMessage: '',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
-    setChatCards(prev => [...prev, newChat]);
-    setSelectedCardId(newChatId);
-    toast.success("New chat created");
+    
+    setChatCards(prev => [newChat, ...prev]);
+    setActiveChatId(newChatId);
+    setSidebarOpen(false);
   };
 
-  const handleDoubleClickTitle = (cardId: string, currentTitle: string) => {
-    setEditingCardId(cardId);
-    setEditingTitle(currentTitle);
+  const startEditingTitle = (chatId: string, currentTitle: string) => {
+    setEditingTitleId(chatId);
+    setTempTitle(currentTitle);
   };
 
-  const handleSaveTitle = () => {
-    if (editingCardId && editingTitle.trim()) {
-      setChatCards(prev => prev.map(card => 
-        card.id === editingCardId 
-          ? { ...card, title: editingTitle.trim() }
-          : card
+  const saveTitle = () => {
+    if (editingTitleId && tempTitle.trim()) {
+      const newIcon = getTopicIcon(tempTitle);
+      setChatCards(prev => prev.map(chat => 
+        chat.id === editingTitleId 
+          ? { ...chat, title: tempTitle.trim(), icon: newIcon }
+          : chat
       ));
-      toast.success("Chat title updated");
     }
-    setEditingCardId(null);
-    setEditingTitle('');
+    setEditingTitleId(null);
+    setTempTitle('');
+  };
+
+  const cancelEditingTitle = () => {
+    setEditingTitleId(null);
+    setTempTitle('');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleTitleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleSaveTitle();
+      saveTitle();
     } else if (e.key === 'Escape') {
-      setEditingCardId(null);
-      setEditingTitle('');
-    }
-  };
-
-  const handlePinMessage = (cardId: string, messageIndex: number) => {
-    setSelectedCardId(cardId);
-    setSelectedMessageIndex(messageIndex);
-    setPinDialogOpen(true);
-  };
-
-  const handlePinWithDuration = (duration: '8hours' | '1week' | 'forever') => {
-    if (selectedCardId && selectedMessageIndex !== null) {
-      let pinnedUntil: Date | null = null;
-      
-      if (duration === '8hours') {
-        pinnedUntil = new Date(Date.now() + 8 * 60 * 60 * 1000);
-      } else if (duration === '1week') {
-        pinnedUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-      }
-
-      setChatCards(prev => prev.map(card => {
-        if (card.id === selectedCardId) {
-          const updatedMessages = [...card.messages];
-          updatedMessages[selectedMessageIndex] = {
-            ...updatedMessages[selectedMessageIndex],
-            isPinned: true,
-            pinnedUntil
-          };
-          return { ...card, messages: updatedMessages };
-        }
-        return card;
-      }));
-
-      const durationText = duration === 'forever' ? 'forever' : duration === '8hours' ? '8 hours' : '1 week';
-      toast.success(`Message pinned for ${durationText}`);
-    }
-    setPinDialogOpen(false);
-    setSelectedMessageIndex(null);
-  };
-
-  const handleUnpinMessage = (cardId: string, messageIndex: number) => {
-    setChatCards(prev => prev.map(card => {
-      if (card.id === cardId) {
-        const updatedMessages = [...card.messages];
-        updatedMessages[messageIndex] = {
-          ...updatedMessages[messageIndex],
-          isPinned: false,
-          pinnedUntil: undefined
-        };
-        return { ...card, messages: updatedMessages };
-      }
-      return card;
-    }));
-    toast.success("Message unpinned");
-  };
-
-  const scrollToMessage = (cardId: string, messageIndex: number) => {
-    const messageRef = messageRefs.current[cardId]?.[messageIndex];
-    if (messageRef) {
-      messageRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      messageRef.style.backgroundColor = isDarkMode ? '#1e40af' : '#bfdbfe';
-      setTimeout(() => {
-        messageRef.style.backgroundColor = '';
-      }, 1000);
-    }
-  };
-
-  const isMessagePinned = (message: Message) => {
-    if (!message.isPinned) return false;
-    if (!message.pinnedUntil) return true;
-    return new Date() < message.pinnedUntil;
-  };
-
-  // Calculate layout based on minimized cards
-  const maximizedCards = chatCards.filter(card => !minimizedCards[card.id]);
-  const minimizedCardsList = chatCards.filter(card => minimizedCards[card.id]);
-  const hasOnlyOneMaximized = maximizedCards.length === 1;
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { 
-        staggerChildren: 0.05,
-        delayChildren: 0.1 
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { y: 15, opacity: 0 },
-    show: { 
-      y: 0, 
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 25
-      }
-    }
-  };
-
-  const minimizedTabVariants = {
-    hidden: { 
-      opacity: 0, 
-      scale: 0.8,
-      y: 10
-    },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      y: 0,
-      transition: { 
-        type: "spring",
-        stiffness: 400,
-        damping: 25,
-        mass: 0.8
-      }
-    },
-    exit: { 
-      opacity: 0, 
-      scale: 0.8,
-      y: -10,
-      transition: { 
-        duration: 0.2,
-        ease: "easeInOut"
-      }
+      cancelEditingTitle();
     }
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
-        ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
-        : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
-    }`}>
-      
-      <div className="container mx-auto max-w-7xl px-4 py-8">
-        {/* Header */}
-        <motion.div 
-          className="flex justify-between items-center mb-8"
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-        >
-          <div className="flex items-center space-x-3">
-            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              akinAI
-            </h1>
-            <span className={`text-xs px-2 py-1 rounded-full ${
-              isDarkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'
-            }`}>
-              PREMIUM
-            </span>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSettingsOpen(true)}
-              className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
-            >
-              <Settings className="h-4 w-4" />
-            </Button>
+    <div className={`flex h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 sm:w-72 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r transition-transform duration-200 ease-in-out lg:transition-none`}>
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="p-4 sm:p-6 border-b border-gray-700">
+            <div className="flex items-center justify-between mb-4">
+              <h1 className={`text-xl sm:text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                akinAI
+              </h1>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  className={isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
+                >
+                  {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSettingsOpen(true)}
+                  className={isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
             
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+            <Button 
+              onClick={createNewChat}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base"
             >
-              {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
-            
-            <Button
-              onClick={handleNewChat}
-              className={`${
-                isDarkMode 
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                  : 'bg-blue-600 hover:bg-blue-700 text-white'
-              }`}
-            >
-              <Plus className="h-4 w-4 mr-1" />
+              <Plus className="h-4 w-4 mr-2" />
               New Chat
             </Button>
           </div>
-        </motion.div>
 
-        {/* Chat Actions */}
-        {selectedCardId && (
-          <motion.div 
-            className="flex justify-end space-x-2 mb-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleClearChat}
-              className={isDarkMode ? 'border-slate-600 text-red-400 hover:text-red-300 hover:bg-slate-700/50' : 'border-gray-300 text-red-600 hover:text-red-700 hover:bg-red-50'}
-            >
-              <Trash2 className="h-4 w-4 mr-1" />
-              Clear
-            </Button>
-          </motion.div>
-        )}
-
-        {/* Maximized Chat Grid */}
-        <AnimatePresence mode="wait">
-          {maximizedCards.length > 0 && (
-            <motion.div 
-              className={`grid gap-6 min-h-[600px] transition-all duration-400 ease-out ${
-                hasOnlyOneMaximized 
-                  ? 'grid-cols-1' 
-                  : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-              }`}
-              variants={containerVariants}
-              initial="hidden"
-              animate="show"
-              layout
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            >
-              {maximizedCards.map((card, idx) => {
-                const pinnedMessages = card.messages.filter((message, index) => isMessagePinned(message)).map((message, originalIndex) => {
-                  const actualIndex = card.messages.findIndex(m => m === message);
-                  return { message, index: actualIndex };
-                });
-                
-                return (
-                  <motion.div 
-                    key={card.id} 
-                    variants={itemVariants} 
-                    whileHover={{ y: -3, transition: { duration: 0.2, ease: "easeOut" } }}
-                    className="flex h-full"
-                    onClick={() => handleSelectCard(card.id)}
-                    layout
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                  >
-                    <Card 
-                      className={`overflow-hidden shadow-sm border cursor-pointer flex flex-col w-full h-full transition-all duration-300 ease-out ${
-                        selectedCardId === card.id 
-                          ? (isDarkMode 
-                              ? 'ring-2 ring-blue-500/80 bg-slate-800 border-blue-500/50 shadow-lg' 
-                              : 'ring-2 ring-blue-500/80 bg-blue-50 border-blue-500/50 shadow-lg')
-                          : (isDarkMode 
-                              ? 'bg-slate-800/50 border-slate-700 hover:bg-slate-800 hover:shadow-md' 
-                              : 'bg-white border-gray-200 hover:bg-gray-50 hover:shadow-md')
-                      }`}
-                    >
-                      <CardHeader className={`flex flex-row items-center justify-between p-4 border-b ${
-                        isDarkMode ? 'border-slate-700' : 'border-gray-200'
-                      }`}>
-                        <div className="flex items-center flex-1">
-                          <span className="mr-2">{card.icon}</span>
-                          {editingCardId === card.id ? (
-                            <Input
-                              value={editingTitle}
-                              onChange={(e) => setEditingTitle(e.target.value)}
-                              onKeyDown={handleKeyPress}
-                              onBlur={handleSaveTitle}
-                              className={`text-lg font-medium bg-transparent border-none p-0 h-auto focus:ring-0 ${
-                                isDarkMode ? 'text-white' : 'text-gray-900'
-                              }`}
-                              autoFocus
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          ) : (
-                            <CardTitle 
-                              className={`text-lg font-medium cursor-pointer ${
-                                isDarkMode ? 'text-white' : 'text-gray-900'
-                              }`}
-                              onDoubleClick={(e) => {
-                                e.stopPropagation();
-                                handleDoubleClickTitle(card.id, card.title);
-                              }}
-                            >
-                              {card.title}
-                            </CardTitle>
-                          )}
-                        </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleCardState(card.id);
-                          }} 
-                          className={`transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
-                        >
-                          <Minimize2 className="h-4 w-4" />
-                        </Button>
-                      </CardHeader>
-                      
-                      <CardContent className="p-4 flex-1 flex flex-col">
-                        {/* Pinned Messages Section */}
-                        {pinnedMessages.length > 0 && (
-                          <div className={`mb-4 p-3 rounded-lg border-l-4 border-yellow-500 ${
-                            isDarkMode ? 'bg-yellow-500/10 border-yellow-500/50' : 'bg-yellow-50 border-yellow-500'
-                          }`}>
-                            <div className="flex items-center mb-2">
-                              <Pin className="h-4 w-4 text-yellow-500 mr-2" />
-                              <span className={`text-sm font-medium ${isDarkMode ? 'text-yellow-400' : 'text-yellow-700'}`}>
-                                Pinned Messages
-                              </span>
-                            </div>
-                            <div className="space-y-2">
-                              {pinnedMessages.map(({ message, index }) => (
-                                <div 
-                                  key={index}
-                                  className={`p-2 rounded cursor-pointer transition-colors duration-200 ${
-                                    isDarkMode ? 'bg-slate-800/50 hover:bg-slate-700/50 text-slate-200' : 'bg-white hover:bg-gray-50 text-gray-800'
-                                  }`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    scrollToMessage(card.id, index);
-                                  }}
-                                >
-                                  <div className="text-sm line-clamp-2">
-                                    {message.content}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
+          {/* Chat List */}
+          <div className="flex-1 overflow-y-auto p-2 sm:p-4">
+            <div className="space-y-2">
+              {chatCards.map((chat) => (
+                <Card 
+                  key={chat.id}
+                  className={`cursor-pointer transition-all duration-200 ${
+                    activeChatId === chat.id 
+                      ? (isDarkMode ? 'bg-gray-700 border-blue-500' : 'bg-blue-50 border-blue-500')
+                      : (isDarkMode ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-white border-gray-200 hover:bg-gray-50')
+                  }`}
+                  onClick={() => {
+                    setActiveChatId(chat.id);
+                    setSidebarOpen(false);
+                  }}
+                >
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="flex items-center space-x-3">
+                      <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-gray-600' : 'bg-gray-100'}`}>
+                        {chat.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        {editingTitleId === chat.id ? (
+                          <input
+                            ref={titleInputRef}
+                            type="text"
+                            value={tempTitle}
+                            onChange={(e) => setTempTitle(e.target.value)}
+                            onKeyDown={handleTitleKeyPress}
+                            onBlur={saveTitle}
+                            className={`w-full bg-transparent border-none outline-none text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                          />
+                        ) : (
+                          <h3 
+                            className={`text-sm font-medium truncate ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                            onDoubleClick={() => startEditingTitle(chat.id, chat.title)}
+                          >
+                            {chat.title}
+                          </h3>
                         )}
-                        
-                        <ScrollArea className="h-[500px] w-full flex-1">
-                          <div className="space-y-3 pr-4">
-                            {card.messages.map((message, idx) => (
-                              <motion.div 
-                                key={idx} 
-                                className={`${message.isUser ? 'text-right' : 'text-left'} group relative`}
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ 
-                                  delay: idx * 0.05,
-                                  duration: 0.3,
-                                  ease: "easeOut"
-                                }}
-                                ref={el => {
-                                  if (!messageRefs.current[card.id]) {
-                                    messageRefs.current[card.id] = {};
-                                  }
-                                  messageRefs.current[card.id][idx] = el;
-                                }}
-                              >
-                                <div className={`inline-block p-3 rounded-lg max-w-[85%] relative transition-all duration-200 ease-out ${
-                                  message.isUser 
-                                    ? 'bg-blue-600 text-white ml-auto' 
-                                    : (isDarkMode 
-                                        ? 'bg-slate-700 text-white border border-slate-600' 
-                                        : 'bg-gray-100 text-gray-900 border border-gray-200')
-                                } ${isMessagePinned(message) ? 'ring-2 ring-yellow-500/60' : ''}`}>
-                                  {isMessagePinned(message) && (
-                                    <Pin className="absolute -top-2 -right-2 h-4 w-4 text-yellow-500 bg-slate-800 rounded-full p-0.5" />
-                                  )}
-                                  {message.content}
-                                </div>
-                                {!message.isUser && (
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className={`opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2 ${
-                                          isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'
-                                        }`}
-                                        onClick={(e) => e.stopPropagation()}
-                                      >
-                                        <MoreVertical className="h-3 w-3" />
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}>
-                                      {isMessagePinned(message) ? (
-                                        <DropdownMenuItem
-                                          onClick={() => handleUnpinMessage(card.id, idx)}
-                                          className={isDarkMode ? 'text-slate-300 hover:text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'}
-                                        >
-                                          <Pin className="h-4 w-4 mr-2" />
-                                          Unpin message
-                                        </DropdownMenuItem>
-                                      ) : (
-                                        <DropdownMenuItem
-                                          onClick={() => handlePinMessage(card.id, idx)}
-                                          className={isDarkMode ? 'text-slate-300 hover:text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'}
-                                        >
-                                          <Pin className="h-4 w-4 mr-2" />
-                                          Pin message
-                                        </DropdownMenuItem>
-                                      )}
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
-                                )}
-                              </motion.div>
-                            ))}
-                          </div>
-                        </ScrollArea>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Minimized Cards Section */}
-        <AnimatePresence>
-          {minimizedCardsList.length > 0 && (
-            <motion.div 
-              className="mt-8 mb-6"
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-            >
-              <div className="flex flex-wrap gap-2">
-                {minimizedCardsList.map((card) => (
-                  <motion.div
-                    key={`minimized-${card.id}`}
-                    variants={minimizedTabVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    layout
-                    className="inline-block"
-                  >
-                    <Card 
-                      className={`overflow-hidden shadow-sm border cursor-pointer transition-all duration-200 ease-out hover:shadow-md min-w-[200px] max-w-[280px] ${
-                        selectedCardId === card.id 
-                          ? (isDarkMode 
-                              ? 'ring-2 ring-blue-500/80 bg-slate-800 border-blue-500/50' 
-                              : 'ring-2 ring-blue-500/80 bg-blue-50 border-blue-500/50')
-                          : (isDarkMode 
-                              ? 'bg-slate-800/70 border-slate-700 hover:bg-slate-800' 
-                              : 'bg-white border-gray-200 hover:bg-gray-50')
-                      }`}
-                      onClick={() => handleSelectCard(card.id)}
-                    >
-                      <CardHeader className={`flex flex-row items-center justify-between p-3 ${
-                        isDarkMode ? 'border-slate-700' : 'border-gray-200'
-                      }`}>
-                        <div className="flex items-center flex-1 min-w-0">
-                          <span className="mr-2 flex-shrink-0">{card.icon}</span>
-                          {editingCardId === card.id ? (
-                            <Input
-                              value={editingTitle}
-                              onChange={(e) => setEditingTitle(e.target.value)}
-                              onKeyDown={handleKeyPress}
-                              onBlur={handleSaveTitle}
-                              className={`text-sm font-medium bg-transparent border-none p-0 h-auto focus:ring-0 flex-1 min-w-0 ${
-                                isDarkMode ? 'text-white' : 'text-gray-900'
-                              }`}
-                              autoFocus
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          ) : (
-                            <CardTitle 
-                              className={`text-sm font-medium cursor-pointer truncate flex-1 min-w-0 ${
-                                isDarkMode ? 'text-white' : 'text-gray-900'
-                              }`}
-                              onDoubleClick={(e) => {
-                                e.stopPropagation();
-                                handleDoubleClickTitle(card.id, card.title);
-                              }}
-                            >
-                              {card.title}
-                            </CardTitle>
-                          )}
-                        </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleCardState(card.id);
-                          }} 
-                          className={`ml-2 h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
-                        >
-                          <Maximize2 className="h-3 w-3" />
-                        </Button>
-                      </CardHeader>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Input Field */}
-        <motion.div 
-          className="mt-8"
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.4, ease: "easeOut" }}
-        >
-          <div className={`border rounded-xl p-4 shadow-sm transition-all duration-200 ${
-            isDarkMode 
-              ? 'bg-slate-800/50 border-slate-700' 
-              : 'bg-white border-gray-200'
-          }`}>
-            <div className="flex items-center space-x-2">
-              <Input 
-                className={`flex-1 border-0 bg-transparent focus:ring-0 h-12 transition-all duration-200 ${
-                  isDarkMode ? 'text-white placeholder:text-gray-400' : 'text-gray-900'
-                } ${!selectedCardId ? 'opacity-70' : ''}`}
-                placeholder={selectedCardId 
-                  ? `Type in "${chatCards.find(card => card.id === selectedCardId)?.title}" chat...` 
-                  : "Select a chat first..."}
-                value={inputMessage}
-                onChange={e => setInputMessage(e.target.value)}
-                onKeyPress={e => e.key === 'Enter' && !loading && handleSendMessage()}
-                disabled={!selectedCardId || loading}
-              />
-              <Button 
-                size="lg" 
-                variant="outline"
-                onClick={handleAddImage}
-                disabled={!selectedCardId || loading}
-                className={`h-12 transition-all duration-200 ${
-                  isDarkMode ? 'border-slate-600 text-green-400 hover:text-green-300 hover:bg-slate-700/50' : 'border-gray-300 text-green-600 hover:text-green-700 hover:bg-green-50'
-                } ${(!selectedCardId || loading) ? 'opacity-70' : ''}`}
-              >
-                <Image className="h-5 w-5" />
-              </Button>
-              <Button 
-                size="lg" 
-                onClick={handleSendMessage}
-                disabled={!selectedCardId || loading}
-                className={`bg-blue-600 hover:bg-blue-700 text-white h-12 transition-all duration-200 ${
-                  (!selectedCardId || loading) ? 'opacity-70' : ''
-                }`}
-              >
-                {loading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Processing
-                  </div>
-                ) : (
-                  <>
-                    <Send className="h-5 w-5 mr-2" />
-                    Send
-                  </>
-                )}
-              </Button>
+                        {chat.lastMessage && (
+                          <p className={`text-xs truncate mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                            {chat.lastMessage}
+                          </p>
+                        )}
+                        <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                          {chat.timestamp}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
-        </motion.div>
-
-        {/* Tags Section */}
-        <motion.div 
-          className="mt-8 flex flex-wrap gap-2"
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.4, ease: "easeOut" }}
-        >
-          {['#assignment', '#travel', '#food', '#ideas'].map((tag, idx) => (
-            <Button 
-              key={tag}
-              variant="outline" 
-              className={`transition-all duration-200 ${
-                isDarkMode 
-                  ? 'bg-slate-800/50 text-slate-300 border-slate-600 hover:text-white hover:bg-slate-700/50' 
-                  : 'bg-gray-50 text-gray-700 border-gray-300 hover:bg-gray-100'
-              }`}
-            >
-              <span className={`w-2 h-2 rounded-full mr-2 ${
-                idx === 0 ? 'bg-blue-500' : 
-                idx === 1 ? 'bg-green-500' : 
-                idx === 2 ? 'bg-purple-500' : 'bg-yellow-500'
-              }`}></span>
-              {tag}
-            </Button>
-          ))}
-        </motion.div>
-        
-        {/* Stats cards */}
-        <motion.div 
-          className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.4, ease: "easeOut" }}
-        >
-          {['Tasks Completed', 'Premium Credits', 'Response Time', 'Satisfaction'].map((stat, i) => (
-            <motion.div 
-              key={stat} 
-              className={`rounded-xl p-4 text-center border transition-all duration-200 hover:shadow-md ${
-                isDarkMode 
-                  ? 'bg-slate-800/50 border-slate-700' 
-                  : 'bg-white border-gray-200'
-              }`}
-              whileHover={{ scale: 1.02, transition: { duration: 0.2, ease: "easeOut" } }}
-              initial={{ y: 15, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.7 + i * 0.05, duration: 0.3, ease: "easeOut" }}
-            >
-              <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                {stat}
-              </div>
-              <div className={`text-2xl font-bold mt-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                {i === 0 ? '27' : i === 1 ? '850' : i === 2 ? '1.2s' : '98%'}
-              </div>
-              <div className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-                {i === 0 ? '+5 this week' : i === 1 ? '150 remaining' : i === 2 ? 'Avg. response' : 'User rating'}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+        </div>
       </div>
 
-      {/* Pin Message Dialog */}
-      <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
-        <DialogContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}>
-          <DialogHeader>
-            <DialogTitle className={isDarkMode ? 'text-white' : 'text-gray-900'}>
-              Pin Message
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-600'}`}>
-              How long would you like to pin this message?
-            </p>
-            <div className="space-y-2">
-              <Button
-                onClick={() => handlePinWithDuration('8hours')}
-                variant="outline"
-                className={`w-full justify-start transition-all duration-200 ${
-                  isDarkMode 
-                    ? 'border-slate-600 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 hover:border-orange-400' 
-                    : 'border-gray-300 text-orange-600 hover:text-orange-700 hover:bg-orange-50 hover:border-orange-400'
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile Header */}
+        <div className={`lg:hidden flex items-center justify-between p-4 border-b ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSidebarOpen(true)}
+            className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}
+          >
+            <MessageSquare className="h-5 w-5" />
+          </Button>
+          <h1 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            {chatCards.find(chat => chat.id === activeChatId)?.title || 'Chat'}
+          </h1>
+          <div className="w-10" />
+        </div>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+          <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex items-start space-x-3 sm:space-x-4 ${
+                  message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''
                 }`}
               >
-                ⏰ 8 Hours
-              </Button>
+                <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+                  <AvatarFallback className={message.role === 'user' ? 'bg-blue-600' : 'bg-purple-600'}>
+                    {message.role === 'user' ? <User className="h-4 w-4 sm:h-5 sm:w-5" /> : <Bot className="h-4 w-4 sm:h-5 sm:w-5" />}
+                  </AvatarFallback>
+                </Avatar>
+                <div
+                  className={`flex-1 p-3 sm:p-4 rounded-lg text-sm sm:text-base ${
+                    message.role === 'user'
+                      ? (isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-600 text-white')
+                      : (isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-gray-100 text-gray-900')
+                  }`}
+                >
+                  <div className="whitespace-pre-wrap break-words">{message.content}</div>
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex items-start space-x-3 sm:space-x-4">
+                <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+                  <AvatarFallback className="bg-purple-600">
+                    <Bot className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className={`flex-1 p-3 sm:p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                  <div className="flex space-x-1">
+                    <div className={`w-2 h-2 rounded-full animate-pulse ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`}></div>
+                    <div className={`w-2 h-2 rounded-full animate-pulse delay-75 ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`}></div>
+                    <div className={`w-2 h-2 rounded-full animate-pulse delay-150 ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
+
+        {/* Input Area */}
+        <div className={`border-t p-4 sm:p-6 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <div className="max-w-3xl mx-auto">
+            <div className="flex space-x-2 sm:space-x-4">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Type your message here..."
+                className={`flex-1 text-sm sm:text-base ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'}`}
+                disabled={isLoading}
+              />
               <Button
-                onClick={() => handlePinWithDuration('1week')}
-                variant="outline"
-                className={`w-full justify-start transition-all duration-200 ${
-                  isDarkMode 
-                    ? 'border-slate-600 text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 hover:border-purple-400' 
-                    : 'border-gray-300 text-purple-600 hover:text-purple-700 hover:bg-purple-50 hover:border-purple-400'
-                }`}
+                onClick={handleSend}
+                disabled={isLoading || !input.trim()}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4"
               >
-                📅 1 Week
-              </Button>
-              <Button
-                onClick={() => handlePinWithDuration('forever')}
-                variant="outline"
-                className={`w-full justify-start transition-all duration-200 ${
-                  isDarkMode 
-                    ? 'border-slate-600 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/10 hover:border-yellow-400' 
-                    : 'border-gray-300 text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 hover:border-yellow-400'
-                }`}
-              >
-                ♾️ Forever
+                <Send className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </div>
 
-      {/* API Settings Dialog */}
       <MistralSettings 
         open={settingsOpen} 
-        onOpenChange={setSettingsOpen} 
-        isDarkMode={isDarkMode} 
+        onOpenChange={setSettingsOpen}
+        isDarkMode={isDarkMode}
       />
     </div>
   );
-};
-
-export default Chat;
+}
