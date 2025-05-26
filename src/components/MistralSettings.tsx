@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -9,11 +10,13 @@ import { Slider } from '@/components/ui/slider';
 import { toast } from 'sonner';
 import { Settings, TestTube } from 'lucide-react';
 import { mistralService, MistralConfig } from '@/services/mistralService';
+
 interface MistralSettingsProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   isDarkMode: boolean;
 }
+
 const defaultConfig: MistralConfig = {
   apiKey: '',
   model: 'mistralai/Mistral-7B-Instruct-v0.1',
@@ -21,6 +24,7 @@ const defaultConfig: MistralConfig = {
   maxTokens: 1000,
   systemPrompt: 'You are a helpful AI assistant. Please provide clear, accurate, and helpful responses.'
 };
+
 const models = [{
   value: 'mistralai/Mistral-7B-Instruct-v0.1',
   label: 'Mistral 7B Instruct v0.1'
@@ -37,6 +41,7 @@ const models = [{
   value: 'mistralai/Mixtral-8x22B-Instruct-v0.1',
   label: 'Mixtral 8x22B Instruct v0.1'
 }];
+
 export const MistralSettings: React.FC<MistralSettingsProps> = ({
   open,
   onOpenChange,
@@ -44,12 +49,14 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
 }) => {
   const [config, setConfig] = useState<MistralConfig>(defaultConfig);
   const [testing, setTesting] = useState(false);
+
   useEffect(() => {
     const savedConfig = localStorage.getItem('mistralConfig');
     if (savedConfig) {
       setConfig(JSON.parse(savedConfig));
     }
   }, []);
+
   const handleSave = () => {
     if (!config.apiKey.trim()) {
       toast.error('API key is required');
@@ -59,6 +66,7 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
     toast.success('Settings saved successfully');
     onOpenChange(false);
   };
+
   const handleTestConnection = async () => {
     if (!config.apiKey.trim()) {
       toast.error('Please enter an API key first');
@@ -78,7 +86,9 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
       setTesting(false);
     }
   };
-  return <Dialog open={open} onOpenChange={onOpenChange}>
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-w-md ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
         <DialogHeader>
           <DialogTitle className={`flex items-center space-x-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -91,11 +101,23 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
           <div>
             <Label className={isDarkMode ? 'text-slate-300' : 'text-gray-700'}>Together.ai API Key</Label>
             <div className="flex space-x-2">
-              <Input type="password" placeholder="Enter your Together.ai API key" value={config.apiKey} onChange={e => setConfig({
-              ...config,
-              apiKey: e.target.value
-            })} className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} />
-              <Button variant="outline" size="sm" onClick={handleTestConnection} disabled={testing} className={isDarkMode ? 'border-slate-600 text-blue-400 hover:bg-slate-700' : 'border-gray-300 text-blue-600 hover:bg-blue-50'}>
+              <Input 
+                type="password" 
+                placeholder="Enter your Together.ai API key" 
+                value={config.apiKey} 
+                onChange={e => setConfig({
+                  ...config,
+                  apiKey: e.target.value
+                })} 
+                className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} 
+              />
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleTestConnection} 
+                disabled={testing} 
+                className={isDarkMode ? 'border-slate-600 text-blue-400 hover:bg-slate-700' : 'border-gray-300 text-blue-600 hover:bg-blue-50'}
+              >
                 <TestTube className="h-4 w-4" />
               </Button>
             </div>
@@ -104,16 +126,22 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
           <div>
             <Label className={isDarkMode ? 'text-slate-300' : 'text-gray-700'}>Model</Label>
             <Select value={config.model} onValueChange={value => setConfig({
-            ...config,
-            model: value
-          })}>
+              ...config,
+              model: value
+            })}>
               <SelectTrigger className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}>
-                {models.map(model => <SelectItem key={model.value} value={model.value} className={isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-900 hover:bg-gray-100'}>
+                {models.map(model => (
+                  <SelectItem 
+                    key={model.value} 
+                    value={model.value} 
+                    className={isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-900 hover:bg-gray-100'}
+                  >
                     {model.label}
-                  </SelectItem>)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -122,18 +150,30 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
             <Label className={isDarkMode ? 'text-slate-300' : 'text-gray-700'}>
               Temperature: {config.temperature}
             </Label>
-            <Slider value={[config.temperature]} onValueChange={([value]) => setConfig({
-            ...config,
-            temperature: value
-          })} max={2} min={0} step={0.1} className="mt-2" />
+            <Slider 
+              value={[config.temperature]} 
+              onValueChange={([value]) => setConfig({
+                ...config,
+                temperature: value
+              })} 
+              max={2} 
+              min={0} 
+              step={0.1} 
+              className="mt-2" 
+            />
           </div>
 
           <div>
             <Label className={isDarkMode ? 'text-slate-300' : 'text-gray-700'}>Max Tokens</Label>
-            <Input type="number" value={config.maxTokens} onChange={e => setConfig({
-            ...config,
-            maxTokens: parseInt(e.target.value) || 1000
-          })} className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} />
+            <Input 
+              type="number" 
+              value={config.maxTokens} 
+              onChange={e => setConfig({
+                ...config,
+                maxTokens: parseInt(e.target.value) || 1000
+              })} 
+              className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} 
+            />
           </div>
 
           <div>
@@ -143,10 +183,15 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
             <span className={`text-xs block mt-1 mb-3 ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
               Defines the AI's behavior, personality, and response style for all conversations
             </span>
-            <Textarea value={config.systemPrompt} onChange={e => setConfig({
-            ...config,
-            systemPrompt: e.target.value
-          })} className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} rows={3} />
+            <Textarea 
+              value={config.systemPrompt} 
+              onChange={e => setConfig({
+                ...config,
+                systemPrompt: e.target.value
+              })} 
+              className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} 
+              rows={3} 
+            />
           </div>
 
           <div className="flex space-x-2 pt-4">
@@ -159,5 +204,6 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
           </div>
         </div>
       </DialogContent>
-    </Dialog>;
+    </Dialog>
+  );
 };
