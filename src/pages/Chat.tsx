@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -410,7 +409,7 @@ const Chat = () => {
         : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
     }`}>
       
-      <div className="container mx-auto max-w-7xl px-4 py-4">
+      <div className="container mx-auto max-w-7xl px-4 pb-4">
         {/* Header */}
         <motion.div 
           className="flex justify-between items-center mb-6"
@@ -543,7 +542,7 @@ const Chat = () => {
                               e.stopPropagation();
                               handleClearChat(card.id);
                             }} 
-                            className={`h-8 w-8 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-orange-400 hover:bg-slate-700' : 'text-gray-600 hover:text-orange-600 hover:bg-gray-100'}`}
+                            className={`h-8 w-8 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-orange-400 hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
