@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -717,7 +718,7 @@ const Chat = () => {
                           </div>
                         )}
                         
-                        <ScrollArea className="h-[700px] w-full flex-1">
+                        <ScrollArea className="h-[800px] w-full flex-1">
                           <div className="space-y-4 pr-4">
                             {card.messages.map((message, idx) => (
                               <motion.div 
