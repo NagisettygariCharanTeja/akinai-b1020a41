@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image, Trash2, Moon, Sun, Plus, Pin, MoreVertical, Settings, MessageSquare, X } from 'lucide-react';
+import { Minimize2, Maximize2, Send, Sparkles, Star, Zap, Image, Trash2, Moon, Sun, Plus, Pin, MoreVertical, Settings, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { MistralSettings } from '@/components/MistralSettings';
@@ -97,29 +97,6 @@ const Chat = () => {
       ...prev,
       [cardId]: !prev[cardId]
     }));
-  };
-
-  const handleDeleteChat = (cardId: string) => {
-    // Don't allow deleting if it's the only chat
-    if (chatCards.length === 1) {
-      toast.error("Cannot delete the last chat");
-      return;
-    }
-
-    setChatCards(prev => {
-      const newChats = prev.filter(card => card.id !== cardId);
-      return newChats;
-    });
-
-    // If the deleted chat was selected, select another one
-    if (selectedCardId === cardId) {
-      const remainingChats = chatCards.filter(card => card.id !== cardId);
-      if (remainingChats.length > 0) {
-        setSelectedCardId(remainingChats[0].id);
-      }
-    }
-
-    toast.success("Chat deleted");
   };
 
   const handleSendMessage = async () => {
@@ -230,13 +207,15 @@ const Chat = () => {
     setSelectedCardId(cardId);
   };
 
-  const handleClearChat = (cardId: string) => {
-    setChatCards(prev => prev.map(card => 
-      card.id === cardId 
-        ? { ...card, messages: [], title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> }
-        : card
-    ));
-    toast.success("Chat cleared");
+  const handleClearChat = () => {
+    if (selectedCardId) {
+      setChatCards(prev => prev.map(card => 
+        card.id === selectedCardId 
+          ? { ...card, messages: [], title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> }
+          : card
+      ));
+      toast.success("Chat cleared");
+    }
   };
 
   const handleNewChat = () => {
@@ -412,10 +391,10 @@ const Chat = () => {
         : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
     }`}>
       
-      <div className="container mx-auto max-w-7xl px-4 py-6">
+      <div className="container mx-auto max-w-7xl px-4 py-8">
         {/* Header */}
         <motion.div 
-          className="flex justify-between items-center mb-6"
+          className="flex justify-between items-center mb-8"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
@@ -488,7 +467,7 @@ const Chat = () => {
         <AnimatePresence mode="wait">
           {maximizedCards.length > 0 && (
             <motion.div 
-              className={`grid gap-4 min-h-[500px] transition-all duration-400 ease-out ${
+              className={`grid gap-6 min-h-[600px] transition-all duration-400 ease-out ${
                 hasOnlyOneMaximized 
                   ? 'grid-cols-1' 
                   : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
@@ -557,44 +536,17 @@ const Chat = () => {
                             </CardTitle>
                           )}
                         </div>
-                        <div className="flex items-center space-x-1">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleClearChat(card.id);
-                            }} 
-                            className={`transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-orange-400 hover:bg-slate-700' : 'text-gray-600 hover:text-orange-600 hover:bg-gray-100'}`}
-                            title="Clear chat"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteChat(card.id);
-                            }} 
-                            className={`transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-red-400 hover:bg-slate-700' : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'}`}
-                            title="Delete chat"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleCardState(card.id);
-                            }} 
-                            className={`transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
-                            title="Minimize chat"
-                          >
-                            <Minimize2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleCardState(card.id);
+                          }} 
+                          className={`transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                        >
+                          <Minimize2 className="h-4 w-4" />
+                        </Button>
                       </CardHeader>
                       
                       <CardContent className="p-4 flex-1 flex flex-col">
@@ -630,7 +582,7 @@ const Chat = () => {
                           </div>
                         )}
                         
-                        <ScrollArea className="h-[400px] w-full flex-1">
+                        <ScrollArea className="h-[500px] w-full flex-1">
                           <div className="space-y-3 pr-4">
                             {card.messages.map((message, idx) => (
                               <motion.div 
@@ -714,7 +666,7 @@ const Chat = () => {
         <AnimatePresence>
           {minimizedCardsList.length > 0 && (
             <motion.div 
-              className="mt-6 mb-4"
+              className="mt-8 mb-6"
               initial="hidden"
               animate="visible"
               exit="exit"
@@ -773,30 +725,17 @@ const Chat = () => {
                             </CardTitle>
                           )}
                         </div>
-                        <div className="flex items-center space-x-1 ml-2 flex-shrink-0">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteChat(card.id);
-                            }} 
-                            className={`h-6 w-6 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-red-400 hover:bg-slate-700' : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'}`}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleCardState(card.id);
-                            }} 
-                            className={`h-6 w-6 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
-                          >
-                            <Maximize2 className="h-3 w-3" />
-                          </Button>
-                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleCardState(card.id);
+                          }} 
+                          className={`ml-2 h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                        >
+                          <Maximize2 className="h-3 w-3" />
+                        </Button>
                       </CardHeader>
                     </Card>
                   </motion.div>
@@ -808,7 +747,7 @@ const Chat = () => {
 
         {/* Input Field */}
         <motion.div 
-          className="mt-6"
+          className="mt-8"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4, ease: "easeOut" }}
@@ -868,7 +807,7 @@ const Chat = () => {
 
         {/* Tags Section */}
         <motion.div 
-          className="mt-6 flex flex-wrap gap-2"
+          className="mt-8 flex flex-wrap gap-2"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.4, ease: "easeOut" }}
@@ -895,7 +834,7 @@ const Chat = () => {
         
         {/* Stats cards */}
         <motion.div 
-          className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4"
+          className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.4, ease: "easeOut" }}
