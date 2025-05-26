@@ -11,7 +11,7 @@ interface Message {
 }
 
 export const useMistralChat = () => {
-  const [loading, setLoading] = useState(false);
+  const [loadingCards, setLoadingCards] = useState<Record<string, boolean>>({});
 
   const getConfig = (): MistralConfig | null => {
     const savedConfig = localStorage.getItem('mistralConfig');
@@ -24,7 +24,8 @@ export const useMistralChat = () => {
 
   const sendMessage = async (
     userMessage: string,
-    conversationHistory: Message[]
+    conversationHistory: Message[],
+    cardId: string
   ): Promise<string> => {
     const config = getConfig();
     if (!config) {
@@ -36,7 +37,8 @@ export const useMistralChat = () => {
       throw new Error('API key missing');
     }
 
-    setLoading(true);
+    // Set loading state for this specific card
+    setLoadingCards(prev => ({ ...prev, [cardId]: true }));
 
     try {
       // Convert conversation history to Mistral format
@@ -66,13 +68,17 @@ export const useMistralChat = () => {
       toast.error(`Chat error: ${errorMessage}`);
       throw error;
     } finally {
-      setLoading(false);
+      // Clear loading state for this specific card
+      setLoadingCards(prev => ({ ...prev, [cardId]: false }));
     }
   };
 
+  const isCardLoading = (cardId: string) => loadingCards[cardId] || false;
+
   return {
     sendMessage,
-    loading,
+    loadingCards,
+    isCardLoading,
     isConfigured: () => {
       const config = getConfig();
       return config && config.apiKey;

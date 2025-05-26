@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,7 +15,7 @@ interface Message {
   content: string;
   isUser: boolean;
   isPinned?: boolean;
-  pinnedUntil?: Date | null; // null means forever
+  pinnedUntil?: Date | null;
 }
 
 interface ChatCard {
@@ -37,7 +36,7 @@ const Chat = () => {
   const [selectedMessageIndex, setSelectedMessageIndex] = useState<number | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const messageRefs = useRef<Record<string, Record<number, HTMLDivElement | null>>>({});
-  const { sendMessage, loading, isConfigured } = useMistralChat();
+  const { sendMessage, isCardLoading, isConfigured } = useMistralChat();
 
   // Initialize with one default chat
   const [chatCards, setChatCards] = useState<ChatCard[]>([
@@ -61,7 +60,7 @@ const Chat = () => {
   }, []);
 
   // Function to generate chat title and icon based on conversation
-  const generateChatTitleAndIcon = (messages: Message[]) => {
+  const generateChatTitleAndIcon = useCallback((messages: Message[]) => {
     if (messages.length === 0) return { title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> };
     
     const firstUserMessage = messages.find(m => m.isUser)?.content.toLowerCase() || '';
@@ -91,16 +90,16 @@ const Chat = () => {
       const title = words.length > 20 ? words.substring(0, 20) + '...' : words;
       return { title: title || 'General Chat', icon: <Zap className="h-5 w-5 text-purple-500" /> };
     }
-  };
+  }, []);
 
-  const toggleCardState = (cardId: string) => {
+  const toggleCardState = useCallback((cardId: string) => {
     setMinimizedCards(prev => ({
       ...prev,
       [cardId]: !prev[cardId]
     }));
-  };
+  }, []);
 
-  const handleDeleteChat = (cardId: string) => {
+  const handleDeleteChat = useCallback((cardId: string) => {
     // Don't allow deleting if it's the only chat
     if (chatCards.length === 1) {
       toast.error("Cannot delete the last chat");
@@ -118,9 +117,9 @@ const Chat = () => {
     }
     
     toast.success("Chat deleted");
-  };
+  }, [chatCards.length, selectedCardId, chatCards]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!inputMessage.trim() || !selectedCardId) {
       if (!selectedCardId) {
         toast.error("No chat selected", {
@@ -135,6 +134,14 @@ const Chat = () => {
         description: "Please configure your API settings first",
       });
       setSettingsOpen(true);
+      return;
+    }
+
+    // Check if this specific card is already loading
+    if (isCardLoading(selectedCardId)) {
+      toast.error("Chat is busy", {
+        description: "Please wait for the current response to complete",
+      });
       return;
     }
 
@@ -165,8 +172,8 @@ const Chat = () => {
       const currentCard = chatCards.find(card => card.id === selectedCardId);
       const conversationHistory = currentCard?.messages || [];
 
-      // Send to Together.ai API
-      const response = await sendMessage(userInput, conversationHistory);
+      // Send to Together.ai API with card ID
+      const response = await sendMessage(userInput, conversationHistory, selectedCardId);
 
       // Add AI response and update title/icon if it's the first exchange
       setChatCards(prev => {
@@ -215,29 +222,29 @@ const Chat = () => {
         });
       });
     }
-  };
+  }, [inputMessage, selectedCardId, isConfigured, isCardLoading, sendMessage, chatCards, generateChatTitleAndIcon]);
 
-  const handleAddImage = () => {
+  const handleAddImage = useCallback(() => {
     toast.info("Add Image", {
       description: "Image upload feature coming soon",
       icon: <Image className="h-4 w-4 text-green-500" />
     });
-  };
+  }, []);
 
-  const handleSelectCard = (cardId: string) => {
+  const handleSelectCard = useCallback((cardId: string) => {
     setSelectedCardId(cardId);
-  };
+  }, []);
 
-  const handleClearChat = (cardId: string) => {
+  const handleClearChat = useCallback((cardId: string) => {
     setChatCards(prev => prev.map(card => 
       card.id === cardId 
         ? { ...card, messages: [], title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> }
         : card
     ));
     toast.success("Chat cleared");
-  };
+  }, []);
 
-  const handleNewChat = () => {
+  const handleNewChat = useCallback(() => {
     const newChatId = `new-chat-${Date.now()}`;
     const newChat = {
       id: newChatId,
@@ -248,14 +255,14 @@ const Chat = () => {
     setChatCards(prev => [...prev, newChat]);
     setSelectedCardId(newChatId);
     toast.success("New chat created");
-  };
+  }, []);
 
-  const handleDoubleClickTitle = (cardId: string, currentTitle: string) => {
+  const handleDoubleClickTitle = useCallback((cardId: string, currentTitle: string) => {
     setEditingCardId(cardId);
     setEditingTitle(currentTitle);
-  };
+  }, []);
 
-  const handleSaveTitle = () => {
+  const handleSaveTitle = useCallback(() => {
     if (editingCardId && editingTitle.trim()) {
       setChatCards(prev => prev.map(card => 
         card.id === editingCardId 
@@ -266,24 +273,24 @@ const Chat = () => {
     }
     setEditingCardId(null);
     setEditingTitle('');
-  };
+  }, [editingCardId, editingTitle]);
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSaveTitle();
     } else if (e.key === 'Escape') {
       setEditingCardId(null);
       setEditingTitle('');
     }
-  };
+  }, [handleSaveTitle]);
 
-  const handlePinMessage = (cardId: string, messageIndex: number) => {
+  const handlePinMessage = useCallback((cardId: string, messageIndex: number) => {
     setSelectedCardId(cardId);
     setSelectedMessageIndex(messageIndex);
     setPinDialogOpen(true);
-  };
+  }, []);
 
-  const handlePinWithDuration = (duration: '8hours' | '1week' | 'forever') => {
+  const handlePinWithDuration = useCallback((duration: '8hours' | '1week' | 'forever') => {
     if (selectedCardId && selectedMessageIndex !== null) {
       let pinnedUntil: Date | null = null;
       
@@ -311,9 +318,9 @@ const Chat = () => {
     }
     setPinDialogOpen(false);
     setSelectedMessageIndex(null);
-  };
+  }, [selectedCardId, selectedMessageIndex]);
 
-  const handleUnpinMessage = (cardId: string, messageIndex: number) => {
+  const handleUnpinMessage = useCallback((cardId: string, messageIndex: number) => {
     setChatCards(prev => prev.map(card => {
       if (card.id === cardId) {
         const updatedMessages = [...card.messages];
@@ -327,9 +334,9 @@ const Chat = () => {
       return card;
     }));
     toast.success("Message unpinned");
-  };
+  }, []);
 
-  const scrollToMessage = (cardId: string, messageIndex: number) => {
+  const scrollToMessage = useCallback((cardId: string, messageIndex: number) => {
     const messageRef = messageRefs.current[cardId]?.[messageIndex];
     if (messageRef) {
       messageRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -338,26 +345,29 @@ const Chat = () => {
         messageRef.style.backgroundColor = '';
       }, 1000);
     }
-  };
+  }, [isDarkMode]);
 
-  const isMessagePinned = (message: Message) => {
+  const isMessagePinned = useCallback((message: Message) => {
     if (!message.isPinned) return false;
     if (!message.pinnedUntil) return true;
     return new Date() < message.pinnedUntil;
-  };
+  }, []);
 
   // Calculate layout based on minimized cards
   const maximizedCards = chatCards.filter(card => !minimizedCards[card.id]);
   const minimizedCardsList = chatCards.filter(card => minimizedCards[card.id]);
   const hasOnlyOneMaximized = maximizedCards.length === 1;
 
+  // Get current card loading state
+  const currentCardLoading = selectedCardId ? isCardLoading(selectedCardId) : false;
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: { 
-        staggerChildren: 0.05,
-        delayChildren: 0.1 
+        staggerChildren: 0.02,
+        delayChildren: 0.02 
       }
     }
   };
@@ -416,7 +426,7 @@ const Chat = () => {
           className="flex justify-between items-center mb-6"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
         >
           <div className="flex items-center space-x-3">
             <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -463,10 +473,10 @@ const Chat = () => {
         </motion.div>
 
         {/* Maximized Chat Grid */}
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {maximizedCards.length > 0 && (
             <motion.div 
-              className={`grid gap-6 min-h-[600px] transition-all duration-400 ease-out ${
+              className={`grid gap-6 transition-all duration-200 ease-out ${
                 hasOnlyOneMaximized 
                   ? 'grid-cols-1' 
                   : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
@@ -475,13 +485,16 @@ const Chat = () => {
               initial="hidden"
               animate="show"
               layout
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              style={{ minHeight: 'auto' }}
             >
               {maximizedCards.map((card, idx) => {
                 const pinnedMessages = card.messages.filter((message, index) => isMessagePinned(message)).map((message, originalIndex) => {
                   const actualIndex = card.messages.findIndex(m => m === message);
                   return { message, index: actualIndex };
                 });
+                
+                const cardIsLoading = isCardLoading(card.id);
                 
                 return (
                   <motion.div 
@@ -491,10 +504,11 @@ const Chat = () => {
                     className="flex h-full"
                     onClick={() => handleSelectCard(card.id)}
                     layout
-                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    layoutId={card.id}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
                   >
                     <Card 
-                      className={`overflow-hidden shadow-sm border cursor-pointer flex flex-col w-full h-full transition-all duration-300 ease-out ${
+                      className={`overflow-hidden shadow-sm border cursor-pointer flex flex-col w-full h-full transition-all duration-200 ease-out ${
                         selectedCardId === card.id 
                           ? (isDarkMode 
                               ? 'ring-2 ring-blue-500/80 bg-slate-800 border-blue-500/50 shadow-lg' 
@@ -509,6 +523,9 @@ const Chat = () => {
                       }`}>
                         <div className="flex items-center flex-1">
                           <span className="mr-2">{card.icon}</span>
+                          {cardIsLoading && (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
+                          )}
                           {editingCardId === card.id ? (
                             <Input
                               value={editingTitle}
@@ -614,8 +631,8 @@ const Chat = () => {
                                 initial={{ opacity: 0, y: 8 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ 
-                                  delay: idx * 0.05,
-                                  duration: 0.3,
+                                  delay: idx * 0.02,
+                                  duration: 0.2,
                                   ease: "easeOut"
                                 }}
                                 ref={el => {
@@ -695,87 +712,95 @@ const Chat = () => {
               exit="exit"
             >
               <div className="flex flex-wrap gap-2">
-                {minimizedCardsList.map((card) => (
-                  <motion.div
-                    key={`minimized-${card.id}`}
-                    variants={minimizedTabVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    layout
-                    className="inline-block"
-                  >
-                    <Card 
-                      className={`overflow-hidden shadow-sm border cursor-pointer transition-all duration-200 ease-out hover:shadow-md min-w-[200px] max-w-[280px] ${
-                        selectedCardId === card.id 
-                          ? (isDarkMode 
-                              ? 'ring-2 ring-blue-500/80 bg-slate-800 border-blue-500/50' 
-                              : 'ring-2 ring-blue-500/80 bg-blue-50 border-blue-500/50')
-                          : (isDarkMode 
-                              ? 'bg-slate-800/70 border-slate-700 hover:bg-slate-800' 
-                              : 'bg-white border-gray-200 hover:bg-gray-50')
-                      }`}
-                      onClick={() => handleSelectCard(card.id)}
+                {minimizedCardsList.map((card) => {
+                  const cardIsLoading = isCardLoading(card.id);
+                  
+                  return (
+                    <motion.div
+                      key={`minimized-${card.id}`}
+                      variants={minimizedTabVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      layout
+                      layoutId={`minimized-${card.id}`}
+                      className="inline-block"
                     >
-                      <CardHeader className={`flex flex-row items-center justify-between p-3 ${
-                        isDarkMode ? 'border-slate-700' : 'border-gray-200'
-                      }`}>
-                        <div className="flex items-center flex-1 min-w-0">
-                          <span className="mr-2 flex-shrink-0">{card.icon}</span>
-                          {editingCardId === card.id ? (
-                            <Input
-                              value={editingTitle}
-                              onChange={(e) => setEditingTitle(e.target.value)}
-                              onKeyDown={handleKeyPress}
-                              onBlur={handleSaveTitle}
-                              className={`text-sm font-medium bg-transparent border-none p-0 h-auto focus:ring-0 flex-1 min-w-0 ${
-                                isDarkMode ? 'text-white' : 'text-gray-900'
-                              }`}
-                              autoFocus
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          ) : (
-                            <CardTitle 
-                              className={`text-sm font-medium cursor-pointer truncate flex-1 min-w-0 ${
-                                isDarkMode ? 'text-white' : 'text-gray-900'
-                              }`}
-                              onDoubleClick={(e) => {
+                      <Card 
+                        className={`overflow-hidden shadow-sm border cursor-pointer transition-all duration-200 ease-out hover:shadow-md min-w-[200px] max-w-[280px] ${
+                          selectedCardId === card.id 
+                            ? (isDarkMode 
+                                ? 'ring-2 ring-blue-500/80 bg-slate-800 border-blue-500/50' 
+                                : 'ring-2 ring-blue-500/80 bg-blue-50 border-blue-500/50')
+                            : (isDarkMode 
+                                ? 'bg-slate-800/70 border-slate-700 hover:bg-slate-800' 
+                                : 'bg-white border-gray-200 hover:bg-gray-50')
+                        }`}
+                        onClick={() => handleSelectCard(card.id)}
+                      >
+                        <CardHeader className={`flex flex-row items-center justify-between p-3 ${
+                          isDarkMode ? 'border-slate-700' : 'border-gray-200'
+                        }`}>
+                          <div className="flex items-center flex-1 min-w-0">
+                            <span className="mr-2 flex-shrink-0">{card.icon}</span>
+                            {cardIsLoading && (
+                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500 mr-2 flex-shrink-0"></div>
+                            )}
+                            {editingCardId === card.id ? (
+                              <Input
+                                value={editingTitle}
+                                onChange={(e) => setEditingTitle(e.target.value)}
+                                onKeyDown={handleKeyPress}
+                                onBlur={handleSaveTitle}
+                                className={`text-sm font-medium bg-transparent border-none p-0 h-auto focus:ring-0 flex-1 min-w-0 ${
+                                  isDarkMode ? 'text-white' : 'text-gray-900'
+                                }`}
+                                autoFocus
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                            ) : (
+                              <CardTitle 
+                                className={`text-sm font-medium cursor-pointer truncate flex-1 min-w-0 ${
+                                  isDarkMode ? 'text-white' : 'text-gray-900'
+                                }`}
+                                onDoubleClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDoubleClickTitle(card.id, card.title);
+                                }}
+                              >
+                                {card.title}
+                              </CardTitle>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-1 ml-2">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={(e) => {
                                 e.stopPropagation();
-                                handleDoubleClickTitle(card.id, card.title);
-                              }}
+                                handleDeleteChat(card.id);
+                              }} 
+                              className={`h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-red-400 hover:bg-slate-700' : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'}`}
                             >
-                              {card.title}
-                            </CardTitle>
-                          )}
-                        </div>
-                        <div className="flex items-center space-x-1 ml-2">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteChat(card.id);
-                            }} 
-                            className={`h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-red-400 hover:bg-slate-700' : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'}`}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleCardState(card.id);
-                            }} 
-                            className={`h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
-                          >
-                            <Maximize2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </CardHeader>
-                    </Card>
-                  </motion.div>
-                ))}
+                              <X className="h-3 w-3" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleCardState(card.id);
+                              }} 
+                              className={`h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                            >
+                              <Maximize2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </CardHeader>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
               </div>
             </motion.div>
           )}
@@ -786,7 +811,7 @@ const Chat = () => {
           className="mt-8"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.4, ease: "easeOut" }}
+          transition={{ delay: 0.1, duration: 0.2, ease: "easeOut" }}
         >
           <div className={`border rounded-xl p-4 shadow-sm transition-all duration-200 ${
             isDarkMode 
@@ -797,35 +822,37 @@ const Chat = () => {
               <Input 
                 className={`flex-1 border-0 bg-transparent focus:ring-0 h-12 transition-all duration-200 ${
                   isDarkMode ? 'text-white placeholder:text-gray-400' : 'text-gray-900'
-                } ${!selectedCardId ? 'opacity-70' : ''}`}
+                } ${!selectedCardId || currentCardLoading ? 'opacity-70' : ''}`}
                 placeholder={selectedCardId 
-                  ? `Type in "${chatCards.find(card => card.id === selectedCardId)?.title}" chat...` 
+                  ? currentCardLoading 
+                    ? `"${chatCards.find(card => card.id === selectedCardId)?.title}" is thinking...`
+                    : `Type in "${chatCards.find(card => card.id === selectedCardId)?.title}" chat...`
                   : "Select a chat first..."}
                 value={inputMessage}
                 onChange={e => setInputMessage(e.target.value)}
-                onKeyPress={e => e.key === 'Enter' && !loading && handleSendMessage()}
-                disabled={!selectedCardId || loading}
+                onKeyPress={e => e.key === 'Enter' && !currentCardLoading && handleSendMessage()}
+                disabled={!selectedCardId || currentCardLoading}
               />
               <Button 
                 size="lg" 
                 variant="outline"
                 onClick={handleAddImage}
-                disabled={!selectedCardId || loading}
+                disabled={!selectedCardId || currentCardLoading}
                 className={`h-12 transition-all duration-200 ${
                   isDarkMode ? 'border-slate-600 text-green-400 hover:text-green-300 hover:bg-slate-700/50' : 'border-gray-300 text-green-600 hover:text-green-700 hover:bg-green-50'
-                } ${(!selectedCardId || loading) ? 'opacity-70' : ''}`}
+                } ${(!selectedCardId || currentCardLoading) ? 'opacity-70' : ''}`}
               >
                 <Image className="h-5 w-5" />
               </Button>
               <Button 
                 size="lg" 
                 onClick={handleSendMessage}
-                disabled={!selectedCardId || loading}
+                disabled={!selectedCardId || currentCardLoading}
                 className={`bg-blue-600 hover:bg-blue-700 text-white h-12 transition-all duration-200 ${
-                  (!selectedCardId || loading) ? 'opacity-70' : ''
+                  (!selectedCardId || currentCardLoading) ? 'opacity-70' : ''
                 }`}
               >
-                {loading ? (
+                {currentCardLoading ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                     Processing
@@ -846,7 +873,7 @@ const Chat = () => {
           className="mt-8 flex flex-wrap gap-2"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.4, ease: "easeOut" }}
+          transition={{ delay: 0.2, duration: 0.2, ease: "easeOut" }}
         >
           {['#assignment', '#travel', '#food', '#ideas'].map((tag, idx) => (
             <Button 
@@ -873,7 +900,7 @@ const Chat = () => {
           className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.4, ease: "easeOut" }}
+          transition={{ delay: 0.3, duration: 0.2, ease: "easeOut" }}
         >
           {['Tasks Completed', 'Premium Credits', 'Response Time', 'Satisfaction'].map((stat, i) => (
             <motion.div 
@@ -886,7 +913,7 @@ const Chat = () => {
               whileHover={{ scale: 1.02, transition: { duration: 0.2, ease: "easeOut" } }}
               initial={{ y: 15, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.7 + i * 0.05, duration: 0.3, ease: "easeOut" }}
+              transition={{ delay: 0.4 + i * 0.02, duration: 0.2, ease: "easeOut" }}
             >
               <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 {stat}
