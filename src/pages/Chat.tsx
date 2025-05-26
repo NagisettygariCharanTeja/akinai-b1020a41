@@ -40,6 +40,28 @@ const Chat = () => {
   const messageRefs = useRef<Record<string, Record<number, HTMLDivElement | null>>>({});
   const { sendMessage, loading, isConfigured } = useMistralChat();
 
+  // Initialize chatCards state with default cards
+  const [chatCards, setChatCards] = useState<ChatCard[]>([
+    {
+      id: 'assignment',
+      title: 'Assignment Help',
+      icon: <Sparkles className="h-5 w-5 text-blue-500" />,
+      messages: []
+    },
+    {
+      id: 'travel',
+      title: 'Travel Planning',
+      icon: <Zap className="h-5 w-5 text-green-500" />,
+      messages: []
+    },
+    {
+      id: 'general',
+      title: 'General Chat',
+      icon: <Star className="h-5 w-5 text-purple-500" />,
+      messages: []
+    }
+  ]);
+
   const chatTemplates = [
     { name: 'Study Help', prompt: 'I need help studying for...' },
     { name: 'Trip Planning', prompt: 'Help me plan a trip to...' },
