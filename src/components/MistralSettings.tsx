@@ -99,17 +99,17 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
         
         <div className="space-y-4">
           <div>
-            <Label className={isDarkMode ? 'text-slate-300' : 'text-gray-700'}>Together.ai API Key</Label>
+            <Label className={isDarkMode ? 'text-slate-300' : 'text-gray-700'}>API Key</Label>
             <div className="flex space-x-2">
               <Input 
                 type="password" 
-                placeholder="Enter your Together.ai API key" 
+                placeholder="Enter your API key" 
                 value={config.apiKey} 
                 onChange={e => setConfig({
                   ...config,
                   apiKey: e.target.value
                 })} 
-                className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} 
+                className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300 text-black'} 
               />
               <Button 
                 variant="outline" 
@@ -129,7 +129,7 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
               ...config,
               model: value
             })}>
-              <SelectTrigger className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'}>
+              <SelectTrigger className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300 text-black'}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}>
@@ -172,7 +172,7 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
                 ...config,
                 maxTokens: parseInt(e.target.value) || 1000
               })} 
-              className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} 
+              className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300 text-black'} 
             />
           </div>
 
@@ -189,7 +189,7 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
                 ...config,
                 systemPrompt: e.target.value
               })} 
-              className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} 
+              className={isDarkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300 text-black'} 
               rows={3} 
             />
           </div>
