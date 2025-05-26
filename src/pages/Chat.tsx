@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -231,15 +230,13 @@ const Chat = () => {
     setSelectedCardId(cardId);
   };
 
-  const handleClearChat = () => {
-    if (selectedCardId) {
-      setChatCards(prev => prev.map(card => 
-        card.id === selectedCardId 
-          ? { ...card, messages: [], title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> }
-          : card
-      ));
-      toast.success("Chat cleared");
-    }
+  const handleClearChat = (cardId: string) => {
+    setChatCards(prev => prev.map(card => 
+      card.id === cardId 
+        ? { ...card, messages: [], title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> }
+        : card
+    ));
+    toast.success("Chat cleared");
   };
 
   const handleNewChat = () => {
@@ -566,9 +563,22 @@ const Chat = () => {
                             size="icon" 
                             onClick={(e) => {
                               e.stopPropagation();
+                              handleClearChat(card.id);
+                            }} 
+                            className={`transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-orange-400 hover:bg-slate-700' : 'text-gray-600 hover:text-orange-600 hover:bg-gray-100'}`}
+                            title="Clear chat"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleDeleteChat(card.id);
                             }} 
                             className={`transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-red-400 hover:bg-slate-700' : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'}`}
+                            title="Delete chat"
                           >
                             <X className="h-4 w-4" />
                           </Button>
@@ -580,6 +590,7 @@ const Chat = () => {
                               toggleCardState(card.id);
                             }} 
                             className={`transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                            title="Minimize chat"
                           >
                             <Minimize2 className="h-4 w-4" />
                           </Button>
