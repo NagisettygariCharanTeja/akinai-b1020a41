@@ -33,7 +33,7 @@ export interface MistralResponse {
 }
 
 class MistralService {
-  private baseUrl = 'https://api.mistral.ai/v1/chat/completions';
+  private baseUrl = 'https://api.together.xyz/v1/chat/completions';
 
   async sendMessage(
     messages: MistralMessage[],
@@ -62,14 +62,14 @@ class MistralService {
       const data: MistralResponse = await response.json();
       return data.choices[0]?.message?.content || 'No response received';
     } catch (error) {
-      console.error('Mistral API error:', error);
+      console.error('Together.ai API error:', error);
       throw error;
     }
   }
 
   async testConnection(apiKey: string): Promise<boolean> {
     try {
-      const response = await fetch('https://api.mistral.ai/v1/models', {
+      const response = await fetch('https://api.together.xyz/v1/models', {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
         },
