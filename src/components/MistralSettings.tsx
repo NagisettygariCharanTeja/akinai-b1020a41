@@ -151,7 +151,7 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({ open, onOpenCh
           <div>
             <Label className={isDarkMode ? 'text-slate-300' : 'text-gray-700'}>
               System Prompt
-              <span className={`text-xs block mt-1 ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+              <span className={`text-xs block mt-1 mb-3 ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
                 Defines the AI's behavior, personality, and response style for all conversations
               </span>
             </Label>
@@ -170,7 +170,7 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({ open, onOpenCh
             <Button 
               variant="outline" 
               onClick={() => onOpenChange(false)}
-              className={isDarkMode ? 'border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}
+              className={isDarkMode ? 'border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}
             >
               Cancel
             </Button>
