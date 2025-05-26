@@ -9,13 +9,11 @@ import { Slider } from '@/components/ui/slider';
 import { toast } from 'sonner';
 import { Settings, TestTube } from 'lucide-react';
 import { mistralService, MistralConfig } from '@/services/mistralService';
-
 interface MistralSettingsProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   isDarkMode: boolean;
 }
-
 const defaultConfig: MistralConfig = {
   apiKey: '',
   model: 'mistralai/Mistral-7B-Instruct-v0.1',
@@ -23,7 +21,6 @@ const defaultConfig: MistralConfig = {
   maxTokens: 1000,
   systemPrompt: 'You are a helpful AI assistant. Please provide clear, accurate, and helpful responses.'
 };
-
 const models = [{
   value: 'mistralai/Mistral-7B-Instruct-v0.1',
   label: 'Mistral 7B Instruct v0.1'
@@ -40,7 +37,6 @@ const models = [{
   value: 'mistralai/Mixtral-8x22B-Instruct-v0.1',
   label: 'Mixtral 8x22B Instruct v0.1'
 }];
-
 export const MistralSettings: React.FC<MistralSettingsProps> = ({
   open,
   onOpenChange,
@@ -48,14 +44,12 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
 }) => {
   const [config, setConfig] = useState<MistralConfig>(defaultConfig);
   const [testing, setTesting] = useState(false);
-
   useEffect(() => {
     const savedConfig = localStorage.getItem('mistralConfig');
     if (savedConfig) {
       setConfig(JSON.parse(savedConfig));
     }
   }, []);
-
   const handleSave = () => {
     if (!config.apiKey.trim()) {
       toast.error('API key is required');
@@ -65,7 +59,6 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
     toast.success('Settings saved successfully');
     onOpenChange(false);
   };
-
   const handleTestConnection = async () => {
     if (!config.apiKey.trim()) {
       toast.error('Please enter an API key first');
@@ -85,7 +78,6 @@ export const MistralSettings: React.FC<MistralSettingsProps> = ({
       setTesting(false);
     }
   };
-
   return <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-w-md ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
         <DialogHeader>
