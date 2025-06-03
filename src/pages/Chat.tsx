@@ -43,7 +43,7 @@ const Chat = () => {
     {
       id: 'new-chat-1',
       title: 'New Chat',
-      icon: <MessageSquare className="h-5 w-5 text-blue-500" />,
+      icon: <MessageSquare className="h-4 w-4 text-blue-600" />,
       messages: []
     }
   ]);
@@ -52,7 +52,7 @@ const Chat = () => {
     setTimeout(() => {
       toast.success("Welcome to AkinAI Premium", {
         description: "Your AI assistant is ready to help",
-        icon: <Star className="h-4 w-4 text-blue-500" />
+        icon: <Star className="h-4 w-4 text-blue-600" />
       });
     }, 1000);
 
@@ -61,34 +61,34 @@ const Chat = () => {
 
   // Function to generate chat title and icon based on conversation
   const generateChatTitleAndIcon = useCallback((messages: Message[]) => {
-    if (messages.length === 0) return { title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> };
+    if (messages.length === 0) return { title: 'New Chat', icon: <MessageSquare className="h-4 w-4 text-blue-600" /> };
     
     const firstUserMessage = messages.find(m => m.isUser)?.content.toLowerCase() || '';
     
     // Simple keyword matching for title and icon generation
     if (firstUserMessage.includes('code') || firstUserMessage.includes('programming') || firstUserMessage.includes('javascript') || firstUserMessage.includes('python')) {
-      return { title: 'Coding Help', icon: <Zap className="h-5 w-5 text-green-500" /> };
+      return { title: 'Coding Help', icon: <Zap className="h-4 w-4 text-green-600" /> };
     } else if (firstUserMessage.includes('work') || firstUserMessage.includes('business') || firstUserMessage.includes('project')) {
-      return { title: 'Work Project', icon: <Zap className="h-5 w-5 text-purple-500" /> };
+      return { title: 'Work Project', icon: <Zap className="h-4 w-4 text-purple-600" /> };
     } else if (firstUserMessage.includes('study') || firstUserMessage.includes('learn') || firstUserMessage.includes('homework') || firstUserMessage.includes('assignment')) {
-      return { title: 'Study Help', icon: <Zap className="h-5 w-5 text-blue-500" /> };
+      return { title: 'Study Help', icon: <Zap className="h-4 w-4 text-blue-600" /> };
     } else if (firstUserMessage.includes('travel') || firstUserMessage.includes('trip') || firstUserMessage.includes('vacation')) {
-      return { title: 'Travel Planning', icon: <Zap className="h-5 w-5 text-orange-500" /> };
+      return { title: 'Travel Planning', icon: <Zap className="h-4 w-4 text-orange-600" /> };
     } else if (firstUserMessage.includes('music') || firstUserMessage.includes('song') || firstUserMessage.includes('artist')) {
-      return { title: 'Music Chat', icon: <Zap className="h-5 w-5 text-pink-500" /> };
+      return { title: 'Music Chat', icon: <Zap className="h-4 w-4 text-pink-600" /> };
     } else if (firstUserMessage.includes('book') || firstUserMessage.includes('read') || firstUserMessage.includes('story')) {
-      return { title: 'Literature', icon: <Zap className="h-5 w-5 text-indigo-500" /> };
+      return { title: 'Literature', icon: <Zap className="h-4 w-4 text-indigo-600" /> };
     } else if (firstUserMessage.includes('game') || firstUserMessage.includes('gaming') || firstUserMessage.includes('play')) {
-      return { title: 'Gaming', icon: <Zap className="h-5 w-5 text-red-500" /> };
+      return { title: 'Gaming', icon: <Zap className="h-4 w-4 text-red-600" /> };
     } else if (firstUserMessage.includes('recipe') || firstUserMessage.includes('food') || firstUserMessage.includes('cook')) {
-      return { title: 'Cooking', icon: <Zap className="h-5 w-5 text-yellow-500" /> };
+      return { title: 'Cooking', icon: <Zap className="h-4 w-4 text-yellow-600" /> };
     } else if (firstUserMessage.includes('love') || firstUserMessage.includes('relationship') || firstUserMessage.includes('dating')) {
-      return { title: 'Relationship', icon: <Zap className="h-5 w-5 text-red-400" /> };
+      return { title: 'Relationship', icon: <Zap className="h-4 w-4 text-rose-600" /> };
     } else {
       // Generate a simple title from the first few words
       const words = firstUserMessage.split(' ').slice(0, 3).join(' ');
       const title = words.length > 20 ? words.substring(0, 20) + '...' : words;
-      return { title: title || 'General Chat', icon: <Zap className="h-5 w-5 text-purple-500" /> };
+      return { title: title || 'General Chat', icon: <Zap className="h-4 w-4 text-purple-600" /> };
     }
   }, []);
 
@@ -227,7 +227,7 @@ const Chat = () => {
   const handleAddImage = useCallback(() => {
     toast.info("Add Image", {
       description: "Image upload feature coming soon",
-      icon: <Image className="h-4 w-4 text-green-500" />
+      icon: <Image className="h-4 w-4 text-green-600" />
     });
   }, []);
 
@@ -238,7 +238,7 @@ const Chat = () => {
   const handleClearChat = useCallback((cardId: string) => {
     setChatCards(prev => prev.map(card => 
       card.id === cardId 
-        ? { ...card, messages: [], title: 'New Chat', icon: <MessageSquare className="h-5 w-5 text-blue-500" /> }
+        ? { ...card, messages: [], title: 'New Chat', icon: <MessageSquare className="h-4 w-4 text-blue-600" /> }
         : card
     ));
     toast.success("Chat cleared");
@@ -249,7 +249,7 @@ const Chat = () => {
     const newChat = {
       id: newChatId,
       title: 'New Chat',
-      icon: <MessageSquare className="h-5 w-5 text-blue-500" />,
+      icon: <MessageSquare className="h-4 w-4 text-blue-600" />,
       messages: []
     };
     setChatCards(prev => [...prev, newChat]);
@@ -340,12 +340,12 @@ const Chat = () => {
     const messageRef = messageRefs.current[cardId]?.[messageIndex];
     if (messageRef) {
       messageRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      messageRef.style.backgroundColor = isDarkMode ? '#1e40af' : '#bfdbfe';
+      messageRef.style.backgroundColor = '#3b82f6';
       setTimeout(() => {
         messageRef.style.backgroundColor = '';
       }, 1000);
     }
-  }, [isDarkMode]);
+  }, []);
 
   const isMessagePinned = useCallback((message: Message) => {
     if (!message.isPinned) return false;
@@ -416,35 +416,35 @@ const Chat = () => {
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
       isDarkMode 
-        ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
-        : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
+        ? 'bg-gray-900' 
+        : 'bg-gray-50'
     }`}>
       
-      <div className="container mx-auto max-w-7xl px-4 py-4">
+      <div className="container mx-auto max-w-7xl px-6 py-6">
         {/* Header */}
         <motion.div 
-          className="flex justify-between items-center mb-6"
+          className="flex justify-between items-center mb-8"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         >
-          <div className="flex items-center space-x-3">
-            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+          <div className="flex items-center space-x-4">
+            <h1 className={`text-4xl font-light tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               akinAI
             </h1>
-            <span className={`text-xs px-2 py-1 rounded-full ${
-              isDarkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'
+            <span className={`text-xs px-3 py-1 rounded-full font-medium ${
+              isDarkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'
             }`}>
               PREMIUM
             </span>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setSettingsOpen(true)}
-              className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+              className={`${isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'} rounded-lg`}
             >
               <Settings className="h-4 w-4" />
             </Button>
@@ -453,7 +453,7 @@ const Chat = () => {
               variant="ghost"
               size="sm"
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className={isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}
+              className={`${isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'} rounded-lg`}
             >
               {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
@@ -464,9 +464,9 @@ const Chat = () => {
                 isDarkMode 
                   ? 'bg-blue-600 hover:bg-blue-700 text-white' 
                   : 'bg-blue-600 hover:bg-blue-700 text-white'
-              }`}
+              } rounded-lg font-medium px-4`}
             >
-              <Plus className="h-4 w-4 mr-1" />
+              <Plus className="h-4 w-4 mr-2" />
               New Chat
             </Button>
           </div>
@@ -500,7 +500,7 @@ const Chat = () => {
                   <motion.div 
                     key={card.id} 
                     variants={itemVariants} 
-                    whileHover={{ y: -3, transition: { duration: 0.2, ease: "easeOut" } }}
+                    whileHover={{ y: -2, transition: { duration: 0.2, ease: "easeOut" } }}
                     className="flex h-full"
                     onClick={() => handleSelectCard(card.id)}
                     layout
@@ -508,23 +508,23 @@ const Chat = () => {
                     transition={{ duration: 0.2, ease: "easeOut" }}
                   >
                     <Card 
-                      className={`overflow-hidden shadow-sm border cursor-pointer flex flex-col w-full min-h-[500px] transition-all duration-200 ease-out ${
+                      className={`overflow-hidden border cursor-pointer flex flex-col w-full min-h-[500px] transition-all duration-200 ease-out ${
                         selectedCardId === card.id 
                           ? (isDarkMode 
-                              ? 'ring-2 ring-blue-500/80 bg-slate-800 border-blue-500/50 shadow-lg' 
-                              : 'ring-2 ring-blue-500/80 bg-blue-50 border-blue-500/50 shadow-lg')
+                              ? 'ring-2 ring-blue-500 bg-gray-800 border-blue-500 shadow-xl' 
+                              : 'ring-2 ring-blue-500 bg-white border-blue-500 shadow-xl')
                           : (isDarkMode 
-                              ? 'bg-slate-800/50 border-slate-700 hover:bg-slate-800 hover:shadow-md' 
-                              : 'bg-white border-gray-200 hover:bg-gray-50 hover:shadow-md')
-                      }`}
+                              ? 'bg-gray-800 border-gray-700 hover:bg-gray-750 hover:shadow-lg' 
+                              : 'bg-white border-gray-200 hover:shadow-lg')
+                      } rounded-xl`}
                     >
-                      <CardHeader className={`flex flex-row items-center justify-between p-4 border-b ${
-                        isDarkMode ? 'border-slate-700' : 'border-gray-200'
+                      <CardHeader className={`flex flex-row items-center justify-between p-6 border-b ${
+                        isDarkMode ? 'border-gray-700' : 'border-gray-100'
                       }`}>
                         <div className="flex items-center flex-1">
-                          <span className="mr-2">{card.icon}</span>
+                          <span className="mr-3">{card.icon}</span>
                           {cardIsLoading && (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-3"></div>
                           )}
                           {editingCardId === card.id ? (
                             <Input
@@ -552,7 +552,7 @@ const Chat = () => {
                             </CardTitle>
                           )}
                         </div>
-                        <div className="flex items-center space-x-1">
+                        <div className="flex items-center space-x-2">
                           <Button 
                             variant="ghost" 
                             size="icon" 
@@ -560,7 +560,7 @@ const Chat = () => {
                               e.stopPropagation();
                               handleClearChat(card.id);
                             }} 
-                            className={`h-8 w-8 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-orange-400 hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                            className={`h-8 w-8 transition-colors duration-200 rounded-lg ${isDarkMode ? 'text-gray-400 hover:text-orange-400 hover:bg-gray-700' : 'text-gray-500 hover:text-orange-500 hover:bg-gray-100'}`}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -571,7 +571,7 @@ const Chat = () => {
                               e.stopPropagation();
                               handleDeleteChat(card.id);
                             }} 
-                            className={`h-8 w-8 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-red-400 hover:bg-slate-700' : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'}`}
+                            className={`h-8 w-8 transition-colors duration-200 rounded-lg ${isDarkMode ? 'text-gray-400 hover:text-red-400 hover:bg-gray-700' : 'text-gray-500 hover:text-red-500 hover:bg-gray-100'}`}
                           >
                             <X className="h-4 w-4" />
                           </Button>
@@ -582,20 +582,20 @@ const Chat = () => {
                               e.stopPropagation();
                               toggleCardState(card.id);
                             }} 
-                            className={`h-8 w-8 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                            className={`h-8 w-8 transition-colors duration-200 rounded-lg ${isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
                           >
                             <Minimize2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </CardHeader>
                       
-                      <CardContent className="p-4 flex-1 flex flex-col">
+                      <CardContent className="p-6 flex-1 flex flex-col">
                         {/* Pinned Messages Section */}
                         {pinnedMessages.length > 0 && (
-                          <div className={`mb-4 p-3 rounded-lg border-l-4 border-yellow-500 ${
-                            isDarkMode ? 'bg-yellow-500/10 border-yellow-500/50' : 'bg-yellow-50 border-yellow-500'
+                          <div className={`mb-6 p-4 rounded-lg border-l-4 border-yellow-500 ${
+                            isDarkMode ? 'bg-yellow-500/10' : 'bg-yellow-50'
                           }`}>
-                            <div className="flex items-center mb-2">
+                            <div className="flex items-center mb-3">
                               <Pin className="h-4 w-4 text-yellow-500 mr-2" />
                               <span className={`text-sm font-medium ${isDarkMode ? 'text-yellow-400' : 'text-yellow-700'}`}>
                                 Pinned Messages
@@ -605,8 +605,8 @@ const Chat = () => {
                               {pinnedMessages.map(({ message, index }) => (
                                 <div 
                                   key={index}
-                                  className={`p-2 rounded cursor-pointer transition-colors duration-200 ${
-                                    isDarkMode ? 'bg-slate-800/50 hover:bg-slate-700/50 text-slate-200' : 'bg-white hover:bg-gray-50 text-gray-800'
+                                  className={`p-3 rounded-lg cursor-pointer transition-colors duration-200 ${
+                                    isDarkMode ? 'bg-gray-800 hover:bg-gray-700 text-gray-200' : 'bg-white hover:bg-gray-50 text-gray-800'
                                   }`}
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -623,7 +623,7 @@ const Chat = () => {
                         )}
                         
                         <ScrollArea className="h-[400px] w-full flex-1">
-                          <div className="space-y-3 pr-4">
+                          <div className="space-y-4 pr-4">
                             {card.messages.map((message, idx) => (
                               <motion.div 
                                 key={idx} 
@@ -642,17 +642,19 @@ const Chat = () => {
                                   messageRefs.current[card.id][idx] = el;
                                 }}
                               >
-                                <div className={`inline-block p-3 rounded-lg max-w-[85%] relative transition-all duration-200 ease-out ${
+                                <div className={`inline-block p-4 rounded-xl max-w-[85%] relative transition-all duration-200 ease-out ${
                                   message.isUser 
-                                    ? 'bg-blue-600 text-white ml-auto' 
+                                    ? 'bg-blue-600 text-white ml-auto shadow-sm' 
                                     : (isDarkMode 
-                                        ? 'bg-slate-700 text-white border border-slate-600' 
-                                        : 'bg-gray-100 text-gray-900 border border-gray-200')
+                                        ? 'bg-gray-700 text-white border border-gray-600 shadow-sm' 
+                                        : 'bg-gray-100 text-gray-900 border border-gray-200 shadow-sm')
                                 } ${isMessagePinned(message) ? 'ring-2 ring-yellow-500/60' : ''}`}>
                                   {isMessagePinned(message) && (
-                                    <Pin className="absolute -top-2 -right-2 h-4 w-4 text-yellow-500 bg-slate-800 rounded-full p-0.5" />
+                                    <Pin className="absolute -top-2 -right-2 h-4 w-4 text-yellow-500 bg-gray-800 rounded-full p-0.5" />
                                   )}
-                                  {message.content}
+                                  <div className="text-sm leading-relaxed">
+                                    {message.content}
+                                  </div>
                                 </div>
                                 {!message.isUser && (
                                   <DropdownMenu>
@@ -661,18 +663,18 @@ const Chat = () => {
                                         variant="ghost"
                                         size="sm"
                                         className={`opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2 ${
-                                          isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'
-                                        }`}
+                                          isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                                        } rounded-lg`}
                                         onClick={(e) => e.stopPropagation()}
                                       >
                                         <MoreVertical className="h-3 w-3" />
                                       </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}>
+                                    <DropdownMenuContent className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg shadow-lg`}>
                                       {isMessagePinned(message) ? (
                                         <DropdownMenuItem
                                           onClick={() => handleUnpinMessage(card.id, idx)}
-                                          className={isDarkMode ? 'text-slate-300 hover:text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'}
+                                          className={`${isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'} rounded-md`}
                                         >
                                           <Pin className="h-4 w-4 mr-2" />
                                           Unpin message
@@ -680,7 +682,7 @@ const Chat = () => {
                                       ) : (
                                         <DropdownMenuItem
                                           onClick={() => handlePinMessage(card.id, idx)}
-                                          className={isDarkMode ? 'text-slate-300 hover:text-white hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'}
+                                          className={`${isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'} rounded-md`}
                                         >
                                           <Pin className="h-4 w-4 mr-2" />
                                           Pin message
@@ -706,12 +708,12 @@ const Chat = () => {
         <AnimatePresence>
           {minimizedCardsList.length > 0 && (
             <motion.div 
-              className="mt-8 mb-6"
+              className="mt-8 mb-8"
               initial="hidden"
               animate="visible"
               exit="exit"
             >
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {minimizedCardsList.map((card) => {
                   const cardIsLoading = isCardLoading(card.id);
                   
@@ -727,22 +729,22 @@ const Chat = () => {
                       className="inline-block"
                     >
                       <Card 
-                        className={`overflow-hidden shadow-sm border cursor-pointer transition-all duration-200 ease-out hover:shadow-md min-w-[200px] max-w-[280px] ${
+                        className={`overflow-hidden border cursor-pointer transition-all duration-200 ease-out hover:shadow-md min-w-[220px] max-w-[300px] ${
                           selectedCardId === card.id 
                             ? (isDarkMode 
-                                ? 'ring-2 ring-blue-500/80 bg-slate-800 border-blue-500/50' 
-                                : 'ring-2 ring-blue-500/80 bg-blue-50 border-blue-500/50')
+                                ? 'ring-2 ring-blue-500 bg-gray-800 border-blue-500' 
+                                : 'ring-2 ring-blue-500 bg-white border-blue-500')
                             : (isDarkMode 
-                                ? 'bg-slate-800/70 border-slate-700 hover:bg-slate-800' 
-                                : 'bg-white border-gray-200 hover:bg-gray-50')
-                        }`}
+                                ? 'bg-gray-800 border-gray-700 hover:bg-gray-750' 
+                                : 'bg-white border-gray-200 hover:shadow-lg')
+                        } rounded-xl`}
                         onClick={() => handleSelectCard(card.id)}
                       >
-                        <CardHeader className={`flex flex-row items-center justify-between p-3 ${
-                          isDarkMode ? 'border-slate-700' : 'border-gray-200'
+                        <CardHeader className={`flex flex-row items-center justify-between p-4 ${
+                          isDarkMode ? 'border-gray-700' : 'border-gray-100'
                         }`}>
                           <div className="flex items-center flex-1 min-w-0">
-                            <span className="mr-2 flex-shrink-0">{card.icon}</span>
+                            <span className="mr-3 flex-shrink-0">{card.icon}</span>
                             {cardIsLoading && (
                               <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500 mr-2 flex-shrink-0"></div>
                             )}
@@ -772,7 +774,7 @@ const Chat = () => {
                               </CardTitle>
                             )}
                           </div>
-                          <div className="flex items-center space-x-1 ml-2">
+                          <div className="flex items-center space-x-1 ml-3">
                             <Button 
                               variant="ghost" 
                               size="icon" 
@@ -780,7 +782,7 @@ const Chat = () => {
                                 e.stopPropagation();
                                 handleDeleteChat(card.id);
                               }} 
-                              className={`h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-red-400 hover:bg-slate-700' : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'}`}
+                              className={`h-6 w-6 flex-shrink-0 transition-colors duration-200 rounded-lg ${isDarkMode ? 'text-gray-400 hover:text-red-400 hover:bg-gray-700' : 'text-gray-500 hover:text-red-500 hover:bg-gray-100'}`}
                             >
                               <X className="h-3 w-3" />
                             </Button>
@@ -791,7 +793,7 @@ const Chat = () => {
                                 e.stopPropagation();
                                 toggleCardState(card.id);
                               }} 
-                              className={`h-6 w-6 flex-shrink-0 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                              className={`h-6 w-6 flex-shrink-0 transition-colors duration-200 rounded-lg ${isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'}`}
                             >
                               <Maximize2 className="h-3 w-3" />
                             </Button>
@@ -813,15 +815,15 @@ const Chat = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.2, ease: "easeOut" }}
         >
-          <div className={`border rounded-xl p-4 shadow-sm transition-all duration-200 ${
+          <div className={`border rounded-xl p-6 transition-all duration-200 ${
             isDarkMode 
-              ? 'bg-slate-800/50 border-slate-700' 
-              : 'bg-white border-gray-200'
+              ? 'bg-gray-800 border-gray-700 shadow-lg' 
+              : 'bg-white border-gray-200 shadow-lg'
           }`}>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-4">
               <Input 
-                className={`flex-1 border-0 bg-transparent focus:ring-0 h-12 transition-all duration-200 ${
-                  isDarkMode ? 'text-white placeholder:text-gray-400' : 'text-gray-900'
+                className={`flex-1 border-0 bg-transparent focus:ring-0 h-12 text-base transition-all duration-200 ${
+                  isDarkMode ? 'text-white placeholder:text-gray-400' : 'text-gray-900 placeholder:text-gray-500'
                 } ${!selectedCardId || currentCardLoading ? 'opacity-70' : ''}`}
                 placeholder={selectedCardId 
                   ? currentCardLoading 
@@ -838,8 +840,8 @@ const Chat = () => {
                 variant="outline"
                 onClick={handleAddImage}
                 disabled={!selectedCardId || currentCardLoading}
-                className={`h-12 transition-all duration-200 ${
-                  isDarkMode ? 'border-slate-600 text-green-400 hover:text-green-300 hover:bg-slate-700/50' : 'border-gray-300 text-green-600 hover:text-green-700 hover:bg-green-50'
+                className={`h-12 transition-all duration-200 rounded-lg ${
+                  isDarkMode ? 'border-gray-600 text-green-500 hover:text-green-400 hover:bg-gray-700' : 'border-gray-300 text-green-600 hover:text-green-700 hover:bg-green-50'
                 } ${(!selectedCardId || currentCardLoading) ? 'opacity-70' : ''}`}
               >
                 <Image className="h-5 w-5" />
@@ -848,7 +850,7 @@ const Chat = () => {
                 size="lg" 
                 onClick={handleSendMessage}
                 disabled={!selectedCardId || currentCardLoading}
-                className={`bg-blue-600 hover:bg-blue-700 text-white h-12 transition-all duration-200 ${
+                className={`bg-blue-600 hover:bg-blue-700 text-white h-12 transition-all duration-200 rounded-lg font-medium px-6 ${
                   (!selectedCardId || currentCardLoading) ? 'opacity-70' : ''
                 }`}
               >
@@ -870,7 +872,7 @@ const Chat = () => {
 
         {/* Tags Section */}
         <motion.div 
-          className="mt-8 flex flex-wrap gap-2"
+          className="mt-8 flex flex-wrap gap-3"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.2, ease: "easeOut" }}
@@ -879,9 +881,9 @@ const Chat = () => {
             <Button 
               key={tag}
               variant="outline" 
-              className={`transition-all duration-200 ${
+              className={`transition-all duration-200 rounded-lg font-medium ${
                 isDarkMode 
-                  ? 'bg-slate-800/50 text-slate-300 border-slate-600 hover:text-white hover:bg-slate-700/50' 
+                  ? 'bg-gray-800 text-gray-300 border-gray-600 hover:text-white hover:bg-gray-700' 
                   : 'bg-gray-50 text-gray-700 border-gray-300 hover:bg-gray-100'
               }`}
             >
@@ -897,7 +899,7 @@ const Chat = () => {
         
         {/* Stats cards */}
         <motion.div 
-          className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4"
+          className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.2, ease: "easeOut" }}
@@ -905,9 +907,9 @@ const Chat = () => {
           {['Tasks Completed', 'Premium Credits', 'Response Time', 'Satisfaction'].map((stat, i) => (
             <motion.div 
               key={stat} 
-              className={`rounded-xl p-4 text-center border transition-all duration-200 hover:shadow-md ${
+              className={`rounded-xl p-6 text-center border transition-all duration-200 hover:shadow-lg ${
                 isDarkMode 
-                  ? 'bg-slate-800/50 border-slate-700' 
+                  ? 'bg-gray-800 border-gray-700' 
                   : 'bg-white border-gray-200'
               }`}
               whileHover={{ scale: 1.02, transition: { duration: 0.2, ease: "easeOut" } }}
@@ -915,13 +917,13 @@ const Chat = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 + i * 0.02, duration: 0.2, ease: "easeOut" }}
             >
-              <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 {stat}
               </div>
-              <div className={`text-2xl font-bold mt-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              <div className={`text-3xl font-light mt-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 {i === 0 ? '27' : i === 1 ? '850' : i === 2 ? '1.2s' : '98%'}
               </div>
-              <div className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+              <div className={`text-xs mt-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                 {i === 0 ? '+5 this week' : i === 1 ? '150 remaining' : i === 2 ? 'Avg. response' : 'User rating'}
               </div>
             </motion.div>
@@ -931,23 +933,23 @@ const Chat = () => {
 
       {/* Pin Message Dialog */}
       <Dialog open={pinDialogOpen} onOpenChange={setPinDialogOpen}>
-        <DialogContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}>
+        <DialogContent className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl`}>
           <DialogHeader>
-            <DialogTitle className={isDarkMode ? 'text-white' : 'text-gray-900'}>
+            <DialogTitle className={`${isDarkMode ? 'text-white' : 'text-gray-900'} text-lg font-medium`}>
               Pin Message
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-600'}`}>
+            <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               How long would you like to pin this message?
             </p>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Button
                 onClick={() => handlePinWithDuration('8hours')}
                 variant="outline"
-                className={`w-full justify-start transition-all duration-200 ${
+                className={`w-full justify-start transition-all duration-200 rounded-lg ${
                   isDarkMode 
-                    ? 'border-slate-600 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 hover:border-orange-400' 
+                    ? 'border-gray-600 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 hover:border-orange-400' 
                     : 'border-gray-300 text-orange-600 hover:text-orange-700 hover:bg-orange-50 hover:border-orange-400'
                 }`}
               >
@@ -956,9 +958,9 @@ const Chat = () => {
               <Button
                 onClick={() => handlePinWithDuration('1week')}
                 variant="outline"
-                className={`w-full justify-start transition-all duration-200 ${
+                className={`w-full justify-start transition-all duration-200 rounded-lg ${
                   isDarkMode 
-                    ? 'border-slate-600 text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 hover:border-purple-400' 
+                    ? 'border-gray-600 text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 hover:border-purple-400' 
                     : 'border-gray-300 text-purple-600 hover:text-purple-700 hover:bg-purple-50 hover:border-purple-400'
                 }`}
               >
@@ -967,9 +969,9 @@ const Chat = () => {
               <Button
                 onClick={() => handlePinWithDuration('forever')}
                 variant="outline"
-                className={`w-full justify-start transition-all duration-200 ${
+                className={`w-full justify-start transition-all duration-200 rounded-lg ${
                   isDarkMode 
-                    ? 'border-slate-600 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/10 hover:border-yellow-400' 
+                    ? 'border-gray-600 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/10 hover:border-yellow-400' 
                     : 'border-gray-300 text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 hover:border-yellow-400'
                 }`}
               >
