@@ -560,7 +560,7 @@ const Chat = () => {
                               e.stopPropagation();
                               handleClearChat(card.id);
                             }} 
-                            className={`h-8 w-8 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-orange-400 hover:bg-slate-700' : 'text-gray-600 hover:text-orange-600 hover:bg-gray-100'}`}
+                            className={`h-8 w-8 transition-colors duration-200 ${isDarkMode ? 'text-slate-400 hover:text-orange-400 hover:bg-slate-700' : 'text-gray-600 hover:bg-gray-100'}`}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -622,7 +622,7 @@ const Chat = () => {
                           </div>
                         )}
                         
-                        <ScrollArea className="h-[500px] w-full flex-1">
+                        <ScrollArea className="h-[700px] w-full flex-1">
                           <div className="space-y-3 pr-4">
                             {card.messages.map((message, idx) => (
                               <motion.div 
