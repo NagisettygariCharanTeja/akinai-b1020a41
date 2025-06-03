@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type ThemeType = 'premium-dark' | 'chatgpt' | 'gemini' | 'claude' | 'opennote';
+export type ThemeType = 'dark' | 'light';
 
 interface ThemeContextType {
   currentTheme: ThemeType;
@@ -22,7 +22,7 @@ interface ThemeColors {
 }
 
 const themeConfigs: Record<ThemeType, ThemeColors> = {
-  'premium-dark': {
+  'dark': {
     primary: 'from-violet-600 to-purple-600',
     secondary: 'from-indigo-600 to-purple-600',
     accent: 'violet-500',
@@ -33,40 +33,7 @@ const themeConfigs: Record<ThemeType, ThemeColors> = {
     border: 'slate-700/50',
     gradient: 'bg-gradient-to-br from-violet-600/20 to-purple-600/20'
   },
-  'chatgpt': {
-    primary: 'from-emerald-600 to-teal-600',
-    secondary: 'from-green-600 to-emerald-600',
-    accent: 'emerald-500',
-    background: 'slate-900',
-    cardBg: 'slate-800/90',
-    textPrimary: 'white',
-    textSecondary: 'gray-300',
-    border: 'slate-600/50',
-    gradient: 'bg-gradient-to-br from-emerald-600/20 to-teal-600/20'
-  },
-  'gemini': {
-    primary: 'from-blue-600 to-cyan-600',
-    secondary: 'from-indigo-600 to-blue-600',
-    accent: 'blue-500',
-    background: 'slate-950',
-    cardBg: 'slate-900/80',
-    textPrimary: 'white',
-    textSecondary: 'gray-400',
-    border: 'slate-700/50',
-    gradient: 'bg-gradient-to-br from-blue-600/20 to-cyan-600/20'
-  },
-  'claude': {
-    primary: 'from-orange-600 to-amber-600',
-    secondary: 'from-yellow-600 to-orange-600',
-    accent: 'orange-500',
-    background: 'slate-950',
-    cardBg: 'slate-900/80',
-    textPrimary: 'white',
-    textSecondary: 'gray-400',
-    border: 'slate-700/50',
-    gradient: 'bg-gradient-to-br from-orange-600/20 to-amber-600/20'
-  },
-  'opennote': {
+  'light': {
     primary: 'from-slate-600 to-gray-600',
     secondary: 'from-gray-600 to-slate-600',
     accent: 'slate-500',
@@ -82,7 +49,7 @@ const themeConfigs: Record<ThemeType, ThemeColors> = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentTheme, setCurrentTheme] = useState<ThemeType>('premium-dark');
+  const [currentTheme, setCurrentTheme] = useState<ThemeType>('dark');
 
   const setTheme = (theme: ThemeType) => {
     setCurrentTheme(theme);

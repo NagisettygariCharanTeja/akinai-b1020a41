@@ -14,6 +14,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import ThemeSelector from '@/components/ThemeSelector';
 import FloatingParticles from '@/components/FloatingParticles';
 import ChatSearch from '@/components/ChatSearch';
+import ThemeToggle from '@/components/ThemeToggle';
 
 interface Message {
   content: string;
@@ -40,6 +41,7 @@ const Chat = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const messageRefs = useRef<Record<string, Record<number, HTMLDivElement | null>>>({});
+  const [isThinking, setIsThinking] = useState(false);
   
   const { currentTheme, getThemeColors } = useTheme();
   const colors = getThemeColors();
@@ -179,6 +181,8 @@ const Chat = () => {
       return;
     }
 
+    setIsThinking(true); // Start thinking indicator
+
     setChatCards(prev => {
       return prev.map(card => {
         if (card.id === selectedCardId) {
@@ -242,6 +246,8 @@ const Chat = () => {
           return card;
         });
       });
+    } finally {
+      setIsThinking(false); // Stop thinking indicator
     }
   }, [inputMessage, selectedCardId, isConfigured, isCardLoading, sendMessage, chatCards, generateChatTitleAndIcon]);
 
@@ -404,8 +410,8 @@ const Chat = () => {
   const minimizedCardsList = chatCards.filter(card => minimizedCards[card.id]);
   const hasOnlyOneMaximized = maximizedCards.length === 1;
 
-  // Get current card loading state
-  const currentCardLoading = selectedCardId ? isCardLoading(selectedCardId) : false;
+  // Get current card loading state or thinking state
+  const currentCardLoading = selectedCardId ? (isCardLoading(selectedCardId) || isThinking) : false;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -511,8 +517,8 @@ const Chat = () => {
               <Search className="h-4 w-4" />
             </Button>
 
-            {/* Theme Selector */}
-            <ThemeSelector />
+            {/* Theme Toggle */}
+            <ThemeToggle />
             
             {/* Settings Button */}
             <Button 
@@ -862,7 +868,9 @@ const Chat = () => {
                 }`} 
                 placeholder={selectedCardId 
                   ? currentCardLoading 
-                    ? `"${chatCards.find(card => card.id === selectedCardId)?.title}" is thinking...` 
+                    ? isThinking 
+                      ? `"${chatCards.find(card => card.id === selectedCardId)?.title}" is thinking...` 
+                      : `"${chatCards.find(card => card.id === selectedCardId)?.title}" is responding...`
                     : `Type in "${chatCards.find(card => card.id === selectedCardId)?.title}" chat...`
                   : "Select a chat first..."
                 } 
@@ -893,7 +901,7 @@ const Chat = () => {
                 {currentCardLoading ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Processing
+                    {isThinking ? 'Thinking...' : 'Processing...'}
                   </div>
                 ) : (
                   <>

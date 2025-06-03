@@ -33,29 +33,26 @@ const FloatingParticles = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Initialize particles
+    // Initialize particles with more visibility
     const initParticles = () => {
       particlesRef.current = [];
-      const particleCount = 50;
+      const particleCount = 80; // Increased particle count
       
       const colors = {
-        'premium-dark': ['rgba(139, 92, 246, 0.3)', 'rgba(168, 85, 247, 0.2)', 'rgba(217, 70, 239, 0.1)'],
-        'chatgpt': ['rgba(16, 185, 129, 0.3)', 'rgba(20, 184, 166, 0.2)', 'rgba(34, 197, 94, 0.1)'],
-        'gemini': ['rgba(37, 99, 235, 0.3)', 'rgba(6, 182, 212, 0.2)', 'rgba(59, 130, 246, 0.1)'],
-        'claude': ['rgba(234, 88, 12, 0.3)', 'rgba(245, 158, 11, 0.2)', 'rgba(251, 191, 36, 0.1)'],
-        'opennote': ['rgba(100, 116, 139, 0.2)', 'rgba(148, 163, 184, 0.1)', 'rgba(203, 213, 225, 0.05)']
+        'dark': ['rgba(139, 92, 246, 0.6)', 'rgba(168, 85, 247, 0.5)', 'rgba(217, 70, 239, 0.4)'],
+        'light': ['rgba(100, 116, 139, 0.4)', 'rgba(148, 163, 184, 0.3)', 'rgba(203, 213, 225, 0.2)']
       };
 
-      const themeColors = colors[currentTheme] || colors['premium-dark'];
+      const themeColors = colors[currentTheme] || colors['dark'];
 
       for (let i = 0; i < particleCount; i++) {
         particlesRef.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 3 + 1,
-          speedX: (Math.random() - 0.5) * 0.5,
-          speedY: (Math.random() - 0.5) * 0.5,
-          opacity: Math.random() * 0.5 + 0.1,
+          size: Math.random() * 4 + 2, // Larger particles
+          speedX: (Math.random() - 0.5) * 0.8,
+          speedY: (Math.random() - 0.5) * 0.8,
+          opacity: Math.random() * 0.8 + 0.3, // Higher opacity
           color: themeColors[Math.floor(Math.random() * themeColors.length)]
         });
       }
@@ -97,7 +94,7 @@ const FloatingParticles = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
+      style={{ opacity: 0.9 }} // Increased opacity
     />
   );
 };
