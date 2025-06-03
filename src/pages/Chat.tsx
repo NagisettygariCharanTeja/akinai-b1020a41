@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -509,7 +508,7 @@ const Chat = () => {
                     transition={{ duration: 0.2, ease: "easeOut" }}
                   >
                     <Card 
-                      className={`overflow-hidden shadow-sm border cursor-pointer flex flex-col w-full min-h-[800px] transition-all duration-200 ease-out ${
+                      className={`overflow-hidden shadow-sm border cursor-pointer flex flex-col w-full min-h-[500px] transition-all duration-200 ease-out ${
                         selectedCardId === card.id 
                           ? (isDarkMode 
                               ? 'ring-2 ring-blue-500/80 bg-slate-800 border-blue-500/50 shadow-lg' 
@@ -623,7 +622,7 @@ const Chat = () => {
                           </div>
                         )}
                         
-                        <ScrollArea className="h-[700px] w-full flex-1">
+                        <ScrollArea className="h-[400px] w-full flex-1">
                           <div className="space-y-3 pr-4">
                             {card.messages.map((message, idx) => (
                               <motion.div 
